@@ -19,14 +19,6 @@
 
 ## :camera: Images & Gifs
 
-### Mobile
-
-<p align='center'>
- 
-</p>
-
-### Web
-
 <p align='center'>
 
 </p>
