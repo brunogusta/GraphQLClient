@@ -9,89 +9,61 @@ import {
   NewUserButton
 } from './styles';
 
-export default function Navigation({ urlEvent }) {
+import StyleControl from '../../../../utils/functions/PerfilsStyleControl';
+
+export default function Navigation() {
   const [handleClick, useHandleClick] = useState({
     button: ''
   });
 
-  const SetList = () => {
+  const HandleStyleButton = name => {
     useHandleClick({
-      button: 'List'
-    });
-  };
-  const SetSearch = () => {
-    useHandleClick({
-      button: 'Search'
-    });
-  };
-  const SetNew = () => {
-    useHandleClick({
-      button: 'New'
-    });
-  };
-  const SetUpdate = () => {
-    useHandleClick({
-      button: 'Update'
-    });
-  };
-  const SetDelete = () => {
-    useHandleClick({
-      button: 'Delete'
+      button: name
     });
   };
 
+  const url = window.location.href;
   useEffect(() => {
-    if (urlEvent.button === 'List') {
-      SetList();
-    } else if (urlEvent.button === 'Search') {
-      SetSearch();
-    } else if (urlEvent.button === 'New') {
-      SetNew();
-    } else if (urlEvent.button === 'Update') {
-      SetUpdate();
-    } else if (urlEvent.button === 'Delete') {
-      SetDelete();
-    } else {
-      SetList();
-    }
-  }, [urlEvent]);
+    const buttonName = StyleControl(url);
+    HandleStyleButton(buttonName);
+  }, [url]);
 
   return (
     <Container>
       <UsersButton
         to="/users/list"
-        onClick={() => SetList()}
+        onClick={() => HandleStyleButton('List')}
         state={handleClick}
       >
         <p>LIST</p>
       </UsersButton>
       <SearchButton
         to="/users/search"
-        onClick={() => SetSearch()}
+        onClick={() => HandleStyleButton('Search')}
         state={handleClick}
       >
         <p>SEARCH</p>
       </SearchButton>
       <NewUserButton
         to="/users/new"
-        onClick={() => SetNew()}
+        onClick={() => HandleStyleButton('New')}
         state={handleClick}
       >
         <p>NEW USER</p>
       </NewUserButton>
       <UpdateButton
         to="/users/update"
-        onClick={() => SetUpdate()}
+        onClick={() => HandleStyleButton('Update')}
         state={handleClick}
       >
         <p>UPDATE</p>
       </UpdateButton>
       <RemoveButton
-        to="/users/remove"
-        onClick={() => SetDelete()}
+        to="/users/delete"
+        onClick={() => HandleStyleButton('Delete')}
         state={handleClick}
       >
-        <p>REMOVE</p>
+        <p>DELETE</p>
       </RemoveButton>
     </Container>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Container, LoginButton, RegisterButton } from './styles';
 
-export default function Navigation({ urlEvent }) {
+export default function Navigation() {
   const [handleClick, useHandleClick] = useState({
     loginBtn: true,
     registerBtn: false
@@ -21,13 +21,14 @@ export default function Navigation({ urlEvent }) {
     });
   };
 
+  const url = window.location.href;
   useEffect(() => {
-    if (urlEvent.loginForm) {
+    if (url.indexOf('login') !== -1) {
       HandlerClickLogin();
     } else {
       HandlerClickRegister();
     }
-  }, [urlEvent]);
+  }, [url]);
 
   return (
     <Container>

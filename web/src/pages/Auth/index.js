@@ -7,39 +7,9 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 
 export default function Auth(props) {
-  const [urlEvent, useUrlEvent] = useState({
-    loginForm: true,
-    registerForm: false
-  });
-
-  const LoadLogin = () => {
-    useUrlEvent({
-      loginForm: true,
-      registerForm: false
-    });
-  };
-
-  const LoadRegister = () => {
-    useUrlEvent({
-      loginForm: false,
-      registerForm: true
-    });
-  };
-
-  const url = window.location.href;
-  useEffect(() => {
-    if (url.indexOf('login') !== -1) {
-      LoadLogin();
-    } else if (url.indexOf('register') !== -1) {
-      LoadRegister();
-    } else {
-      LoadLogin();
-    }
-  }, [url]);
-
   return (
     <Container duration="1s">
-      <Navigation urlEvent={urlEvent} />
+      <Navigation />
       <FormBox>
         <Route exact path="/" component={LoginForm} />
         <Route path="/auth/login" component={LoginForm} />
