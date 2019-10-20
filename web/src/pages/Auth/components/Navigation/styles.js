@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 export const Container = styled.div`
   display: flex;
   flex-direction: row;
-  grid-area: navigation;
   background-color: #e8e7e7;
+  height: 100%;
 `;
 
 export const LoginButton = styled(Link)`
@@ -27,10 +27,11 @@ export const LoginButton = styled(Link)`
     font-weight: bold;
   }
 
-  :hover {
+  &:hover {
     border-bottom: 3px solid #f38bd1;
   }
 `;
+
 export const RegisterButton = styled(Link)`
   display: flex;
   flex-direction: column;
@@ -50,7 +51,7 @@ export const RegisterButton = styled(Link)`
     font-weight: bold;
   }
 
-  :hover {
+  &:hover {
     border-bottom: 3px solid #f38bd1;
   }
 `;

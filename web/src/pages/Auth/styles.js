@@ -1,7 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import BaseAnimation from '../../utils/Animations/BaseAnimation';
-
-const w = window.innerWidth;
+import BaseAnimation from '../../utils/Animations/baseAnimation';
 
 const FadeInAnimation = keyframes`
 from {
@@ -18,31 +16,20 @@ from {
 export const Container = styled(BaseAnimation)`
   display: grid;
   position: relative;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 10fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(60px, 1fr) minmax(300px, 10fr);
   grid-template-areas:
-    'navigation navigation'
-    'form results';
+    'navigation'
+    'form';
 
-  padding: 10px 10px 0px 10px;
+  padding: 10px 20px 0px 20px;
 
   animation-name: ${FadeInAnimation};
 `;
 
 export const FormBox = styled.div`
-  display: flex;
   grid-area: form;
-  justify-content: center;
-  align-items: center;
-
-  color: #333;
 `;
-
-export const Results = styled.div`
-  display: flex;
-  grid-area: results;
-  justify-content: center;
-  align-items: center;
-
-  color: #333;
+export const NavBox = styled.div`
+  grid-area: navigation;
 `;

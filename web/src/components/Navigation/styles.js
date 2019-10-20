@@ -9,7 +9,7 @@ export const Container = styled.div`
   grid-area: nav;
 `;
 
-export const NavButton = styled(Link)`
+export const AuthButton = styled(Link)`
   display: flex;
   flex-direction: column;
   color: #fff;
@@ -19,6 +19,8 @@ export const NavButton = styled(Link)`
   justify-content: center;
   align-items: center;
   text-decoration: none;
+  border-bottom: ${({ handleClick }) =>
+    handleClick.button === 'Auth' ? '3px solid #fff' : null};
 
   p {
     font-size: 13px;
@@ -27,6 +29,54 @@ export const NavButton = styled(Link)`
   }
 
   :hover {
-    border-bottom: 2px solid #fff;
+    border-bottom: 3px solid #fff;
+  }
+`;
+
+export const UsersButton = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  font-size: 20px;
+  height: 100%;
+  width: 150px;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-bottom: ${({ handleClick }) =>
+    handleClick.button === 'Users' ? '3px solid #fff' : null};
+
+  p {
+    font-size: 13px;
+    margin-top: 3px;
+    font-weight: bold;
+  }
+
+  :hover {
+    border-bottom: 3px solid #fff;
+  }
+`;
+
+export const PerfilsButton = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  font-size: 20px;
+  height: 100%;
+  width: 150px;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-bottom: ${({ handleClick }) =>
+    handleClick.button === 'Perfils' ? '3px solid #fff' : null};
+
+  p {
+    font-size: 13px;
+    margin-top: 3px;
+    font-weight: bold;
+  }
+
+  :hover {
+    border-bottom: 3px solid #fff;
   }
 `;

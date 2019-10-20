@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import BaseAnimation from '../../utils/Animations/BaseAnimation';
+import BaseAnimation from '../../utils/Animations/baseAnimation';
 
 const FadeInAnimation = keyframes`
 from {

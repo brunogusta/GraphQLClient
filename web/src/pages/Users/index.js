@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 
 import { Container, FormBox } from './styles';
 
-import Navigation from './components/navigation';
+import Navigation from './components/Navigation';
 import List from './components/List';
 
 export default function Users() {

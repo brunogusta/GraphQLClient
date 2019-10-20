@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const BaseAnimation = styled.div`
+const baseAnimation = styled.div`
   animation-duration: ${props => props.duration};
   animation-timing-function: ${props => props.timingFunction};
   animation-delay: ${props => props.delay};
@@ -11,7 +11,7 @@ const BaseAnimation = styled.div`
   display: ${props => props.display};
 `;
 
-BaseAnimation.defaultProps = {
+baseAnimation.defaultProps = {
   duration: '1s',
   timingFunction: 'ease',
   delay: '0s',
@@ -22,4 +22,4 @@ BaseAnimation.defaultProps = {
   display: 'block'
 };
 
-export default BaseAnimation;
+export default baseAnimation;

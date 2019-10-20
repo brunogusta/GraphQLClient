@@ -5,6 +5,7 @@ export const Container = styled.div`
   align-items: center;
   background-color: #464646;
   grid-area: header;
+  min-height: 70px;
 
   p {
     font-size: 30px;

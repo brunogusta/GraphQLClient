@@ -4,7 +4,7 @@ import { Container, LoginButton, RegisterButton } from './styles';
 
 export default function Navigation() {
   const [handleClick, useHandleClick] = useState({
-    loginBtn: true,
+    loginBtn: false,
     registerBtn: false
   });
 
@@ -25,8 +25,10 @@ export default function Navigation() {
   useEffect(() => {
     if (url.indexOf('login') !== -1) {
       HandlerClickLogin();
-    } else {
+    } else if (url.indexOf('register') !== -1) {
       HandlerClickRegister();
+    } else {
+      HandlerClickLogin();
     }
   }, [url]);
 
