@@ -7,8 +7,8 @@ export const Container = styled.div`
   grid-template-rows:
     minmax(60px, 10vh)
     minmax(70px, 8vh)
-    minmax(400px, 77vh)
-    minmax(30px, 5vh);
+    minmax(400px, 79vh)
+    minmax(30px, 3vh);
   grid-template-areas:
     'header'
     'nav'
