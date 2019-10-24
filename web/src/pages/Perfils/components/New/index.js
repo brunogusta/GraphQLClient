@@ -10,11 +10,8 @@ import {
   ResultsContainer,
   TextError,
   SearchButton,
-  EmailInput,
   NameInput,
-  DropDawnInput,
-  PassInput,
-  GetPerfilsButton
+  LabelInput
 } from './styles';
 
 export default function NewForm() {
@@ -45,25 +42,12 @@ export default function NewForm() {
       <Formik
         initialValues={{
           name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          perfil: ''
+          label: ''
         }}
         onSubmit={values => HandleSubmitValues(values)}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('The name is required'),
-          email: Yup.string()
-            .email('E-mail is not valid')
-            .required('The e-mail is required'),
-          password: Yup.string().required('The password is required'),
-          confirmPassword: Yup.string().test(
-            '',
-            'The password is diferent',
-            function test(value) {
-              return this.parent.password === value;
-            }
-          )
+          label: Yup.string().required('The label is required')
         })}
         render={({
           values,
@@ -75,7 +59,7 @@ export default function NewForm() {
         }) => (
           <FormContainer>
             <SearchTitle>
-              <h3>New user</h3>
+              <h3>New perfil</h3>
             </SearchTitle>
             <Form>
               <NameInput
@@ -88,39 +72,18 @@ export default function NewForm() {
               {errors.name && touched.name && (
                 <TextError>{errors.name}</TextError>
               )}
-              <EmailInput
-                type="email"
-                name="email"
-                placeholder="E-mail"
+              <LabelInput
+                name="label"
+                placeholder="Label"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.email}
+                value={values.label}
               />
-              {errors.email && touched.email && (
-                <TextError>{errors.email}</TextError>
+              {errors.label && touched.label && (
+                <TextError>{errors.label}</TextError>
               )}
-              <PassInput
-                type="password"
-                name="password"
-                placeholder="Password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-              />
-              {errors.password && touched.password && (
-                <TextError>{errors.password}</TextError>
-              )}
-
-              <DropDawnInput
-                name="perfil"
-                options={handleInputEvents.options}
-                onChange={SetPerfil}
-                placeholder="Chose the perfil"
-                value={handleInputEvents.selected}
-              />
-              <GetPerfilsButton type="submit">LOAD PERFILS</GetPerfilsButton>
               <SearchButton type="submit" onClick={handleSubmit}>
-                <p>CREATE NEW USER</p>
+                <p>CREATE NEW PERFIL</p>
               </SearchButton>
             </Form>
           </FormContainer>

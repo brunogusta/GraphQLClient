@@ -49,7 +49,7 @@ export default function Navigation() {
         onClick={() => HandleStyleButton('New')}
         state={handleClick}
       >
-        <p>NEW USER</p>
+        <p>NEW PERFIL</p>
       </NewUserButton>
       <UpdateButton
         to="/perfils/update"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -8,10 +8,10 @@ import {
   FormContainer,
   ResultsContainer,
   TextError,
-  LoginButton
+  SearchButton
 } from './styles';
 
-export default function LoginForm() {
+export default function Search() {
   const [handleError, useHandleError] = useState({
     emptyInputs: false
   });
@@ -30,21 +30,20 @@ export default function LoginForm() {
     });
   };
 
-  const HandleSubmitValues = ({ name, email }) => {
-    if (email === name) {
+  const HandleSubmitValues = ({ id, name }) => {
+    if (id === name) {
       return NoFieldProvided();
     }
   };
 
   return (
-    <Container>
+    <Container duration="1s">
       <Formik
-        initialValues={{ name: '', email: '', password: '' }}
+        initialValues={{ id: '', name: '' }}
         onSubmit={values => HandleSubmitValues(values)}
         validationSchema={Yup.object().shape({
-          name: Yup.string(),
-          email: Yup.string().email('E-mail is not valid'),
-          password: Yup.string().required('The password is required')
+          id: Yup.number().typeError('ID must be a number'),
+          name: Yup.string()
         })}
         render={({
           values,
@@ -56,9 +55,18 @@ export default function LoginForm() {
         }) => (
           <FormContainer>
             <div>
-              <h3>Login</h3>
+              <h3>Search perfil</h3>
             </div>
             <Form>
+              <input
+                type="input"
+                name="id"
+                placeholder="ID"
+                onChange={handleChange}
+                onBlur={handleBlur}
+                value={values.id}
+              />
+              {errors.id && touched.id && <TextError>{errors.id}</TextError>}
               <input
                 name="name"
                 placeholder="Name"
@@ -69,34 +77,12 @@ export default function LoginForm() {
               {errors.name && touched.name && (
                 <TextError>{errors.name}</TextError>
               )}
-              <input
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.email}
-              />
-              {errors.email && touched.email && (
-                <TextError>{errors.email}</TextError>
-              )}
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-              />
-              {errors.password && touched.password && (
-                <TextError>{errors.password}</TextError>
-              )}
               {handleError.emptyInputs && (
-                <TextError>{'Inform your name or email'}</TextError>
+                <TextError>{'No fields provided'}</TextError>
               )}
-              <LoginButton type="submit" onClick={handleSubmit}>
-                <p>SING IN</p>
-              </LoginButton>
+              <SearchButton type="submit" onClick={handleSubmit}>
+                <p>SEARCH</p>
+              </SearchButton>
             </Form>
           </FormContainer>
         )}
