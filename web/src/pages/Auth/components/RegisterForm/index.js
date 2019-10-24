@@ -102,7 +102,7 @@ export default function LoginForm() {
                 <TextError>{errors.confirmPassword}</TextError>
               )}
               <RegisterButton type="submit" onClick={handleSubmit}>
-                <p>Enviar</p>
+                <p>SIGN UP</p>
               </RegisterButton>
               {console.log(errors)}
             </Form>
@@ -111,7 +111,7 @@ export default function LoginForm() {
       />
       <ResultsContainer>
         <div>
-          <h3>Results</h3>
+          <h3></h3>
         </div>
       </ResultsContainer>
     </Container>

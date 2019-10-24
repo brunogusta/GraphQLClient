@@ -75,7 +75,7 @@ export default function LoginForm() {
                 <TextError>{errors.password}</TextError>
               )}
               <LoginButton type="submit" onClick={handleSubmit}>
-                <p>Enviar</p>
+                <p>SING IN</p>
               </LoginButton>
             </Form>
           </FormContainer>

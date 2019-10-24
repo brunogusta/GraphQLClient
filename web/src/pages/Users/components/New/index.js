@@ -75,7 +75,7 @@ export default function NewForm() {
         }) => (
           <FormContainer>
             <SearchTitle>
-              <h3>Search</h3>
+              <h3>New user</h3>
             </SearchTitle>
             <Form>
               <NameInput
@@ -120,7 +120,7 @@ export default function NewForm() {
               />
               <GetPerfilsButton type="submit">LOAD PERFILS</GetPerfilsButton>
               <SearchButton type="submit" onClick={handleSubmit}>
-                <p>ENVIAR</p>
+                <p>CREATE NEW USER</p>
               </SearchButton>
             </Form>
           </FormContainer>
