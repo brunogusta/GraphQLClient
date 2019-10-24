@@ -11,7 +11,7 @@ import {
   SearchButton
 } from './styles';
 
-export default function SearchForm() {
+export default function Search() {
   const [handleError, useHandleError] = useState({
     emptyInputs: false
   });
@@ -82,7 +82,7 @@ export default function SearchForm() {
                 <TextError>{'No fields provided'}</TextError>
               )}
               <SearchButton type="submit" onClick={handleSubmit}>
-                <p>Enviar</p>
+                <p>SEARCH</p>
               </SearchButton>
             </Form>
           </FormContainer>
