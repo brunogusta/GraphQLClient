@@ -1,15 +1,29 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { SendButton } from '../../../../utils/Animations/button';
+import BaseAnimation from '../../../../utils/Animations/baseAnimation';
 
-export const Container = styled.div`
+const FadeInAnimation = keyframes`
+  from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+`;
+
+export const Container = styled(BaseAnimation)`
   display: grid;
   height: 100%;
+  position: relative;
 
   grid-template-columns: repeat(2, min(440px)) 1fr 1fr;
   grid-template-rows: 1fr;
   grid-template-areas: 'formik result';
   column-gap: 15px;
+
+  animation-name: ${FadeInAnimation};
 `;
 
 export const FormContainer = styled.div`

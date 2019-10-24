@@ -54,7 +54,7 @@ export default function LoginForm() {
         }) => (
           <FormContainer>
             <div>
-              <h3>Login</h3>
+              <h3>Register</h3>
             </div>
             <Form>
               <input
