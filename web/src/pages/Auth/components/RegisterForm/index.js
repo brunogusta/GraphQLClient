@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 import * as Yup from 'yup';
 
 import {
@@ -8,16 +11,76 @@ import {
   FormContainer,
   ResultsContainer,
   TextError,
-  RegisterButton
+  RegisterButton,
+  ResponseTextError,
+  ResponseTextSuccess
 } from './styles';
 
-export default function LoginForm() {
+import { Types as RegisterTypes } from '../../../../store/ducks/userRegister';
+
+const REGISTER_MUTATION = gql`
+  mutation($nome: String!, $email: String!, $senha: String!) {
+    registrarUsuario(dados: { nome: $nome, email: $email, senha: $senha }) {
+      id
+      nome
+      email
+      perfis {
+        nome
+      }
+    }
+  }
+`;
+
+export default function RegisterForm() {
   const [requestData, useRequestData] = useState({
-    errors: ''
+    perfilData: {},
+    registerSuccess: false,
+    registerError: false
   });
 
+  const { nome, email, senha } = requestData.perfilData;
+
+  const [SendMutation, { data, loading }] = useMutation(REGISTER_MUTATION, {
+    variables: {
+      nome,
+      email,
+      senha
+    },
+    errorPolicy: 'all',
+    onError: error => {
+      RegisterFail();
+    },
+    onCompleted: ({ registrarUsuario }) => {
+      RegisterSuccess();
+    }
+  });
+
+  const RegisterFail = () => {
+    useRequestData({
+      ...requestData,
+      registerError: true,
+      RegisterSuccess: false
+    });
+  };
+
+  const RegisterSuccess = () => {
+    useRequestData({
+      ...requestData,
+      registerSuccess: true,
+      registerError: false
+    });
+  };
+
   const HandleSubmitValues = values => {
-    console.log(values);
+    useRequestData({
+      perfilData: {
+        nome: values.name,
+        email: values.email,
+        senha: values.password
+      }
+    });
+
+    SendMutation();
   };
 
   return (
@@ -29,7 +92,10 @@ export default function LoginForm() {
           password: '',
           confirmPassword: ''
         }}
-        onSubmit={values => HandleSubmitValues(values)}
+        onSubmit={(values, actions) => {
+          HandleSubmitValues(values);
+          actions.resetForm();
+        }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('The name is required'),
           email: Yup.string()
@@ -104,15 +170,27 @@ export default function LoginForm() {
               <RegisterButton type="submit" onClick={handleSubmit}>
                 <p>SIGN UP</p>
               </RegisterButton>
-              {console.log(errors)}
             </Form>
           </FormContainer>
         )}
       />
+      {}
       <ResultsContainer>
         <div>
-          <h3></h3>
+          <h3>Results</h3>
         </div>
+
+        {requestData.registerError && (
+          <ResponseTextError registerError={requestData.registerError}>
+            <p>Unable to register, please check the data informed.</p>
+          </ResponseTextError>
+        )}
+
+        {requestData.registerSuccess && (
+          <ResponseTextSuccess registerSuccess={requestData.registerSuccess}>
+            <p>User successfully registered!</p>
+          </ResponseTextSuccess>
+        )}
       </ResultsContainer>
     </Container>
   );
