@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLazyQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -11,40 +14,77 @@ import {
   LoginButton
 } from './styles';
 
-export default function LoginForm() {
-  const [handleError, useHandleError] = useState({
-    emptyInputs: false
+import { Types as LoginTypes } from '../../../../store/ducks/userLoged';
+
+const LOGIN_QUERY = gql`
+  query($email: String!, $senha: String!) {
+    login(dados: { email: $email, senha: $senha }) {
+      id
+      nome
+      email
+      token
+      perfis {
+        nome
+      }
+    }
+  }
+`;
+
+export default function LoginForm(props) {
+  const [userData, useUserData] = useState({
+    inputData: {},
+    requestData: {}
   });
 
-  const NoFieldProvided = () => {
-    useHandleError({
-      emptyInputs: true
-    });
-
-    setTimeout(() => Reset(), 2000);
-  };
-
-  const Reset = () => {
-    useHandleError({
-      emptyInputs: false
+  const dispatch = useDispatch();
+  const DisplayUserLoged = data => {
+    dispatch({
+      type: LoginTypes.LOGIN_ACTION,
+      payload: data
     });
   };
 
-  const HandleSubmitValues = ({ name, email }) => {
-    if (email === name) {
-      return NoFieldProvided();
+  const { email, senha } = userData.inputData;
+  const [SendQuery, { data, errors, loading }] = useLazyQuery(LOGIN_QUERY, {
+    variables: {
+      email,
+      senha
+    },
+    errorPolicy: 'all',
+    onError: error => {
+      console.log(error);
+    },
+    onCompleted: ({ login }) => {
+      console.log(login);
+      localStorage.setItem('token', login.token);
+      DisplayUserLoged(login);
     }
+  });
+
+  const HandleSubmitValues = ({ email, senha }) => {
+    console.log('funciona');
+    useUserData({
+      ...userData,
+      inputData: {
+        email,
+        senha
+      }
+    });
+
+    SendQuery();
   };
 
   return (
     <Container>
       <Formik
-        initialValues={{ name: '', email: '', password: '' }}
-        onSubmit={values => HandleSubmitValues(values)}
+        initialValues={{ email: '', senha: '' }}
+        onSubmit={(values, actions) => {
+          HandleSubmitValues(values);
+          actions.resetForm();
+        }}
         validationSchema={Yup.object().shape({
-          name: Yup.string(),
           email: Yup.string().email('E-mail is not valid'),
-          password: Yup.string().required('The password is required')
+          senha: Yup.string().required('The senha is required')
         })}
         render={({
           values,
@@ -60,16 +100,6 @@ export default function LoginForm() {
             </div>
             <Form>
               <input
-                name="name"
-                placeholder="Name"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.name}
-              />
-              {errors.name && touched.name && (
-                <TextError>{errors.name}</TextError>
-              )}
-              <input
                 type="email"
                 name="email"
                 placeholder="E-mail"
@@ -82,17 +112,14 @@ export default function LoginForm() {
               )}
               <input
                 type="password"
-                name="password"
+                name="senha"
                 placeholder="Password"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.password}
+                value={values.senha}
               />
-              {errors.password && touched.password && (
-                <TextError>{errors.password}</TextError>
-              )}
-              {handleError.emptyInputs && (
-                <TextError>{'Inform your name or email'}</TextError>
+              {errors.senha && touched.senha && (
+                <TextError>{errors.senha}</TextError>
               )}
               <LoginButton type="submit" onClick={handleSubmit}>
                 <p>SING IN</p>

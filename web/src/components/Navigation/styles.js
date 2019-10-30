@@ -7,6 +7,7 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   grid-area: nav;
+  margin-bottom: 10px;
 `;
 
 export const AuthButton = styled(Link)`

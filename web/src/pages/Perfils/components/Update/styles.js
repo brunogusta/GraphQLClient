@@ -32,7 +32,7 @@ export const FormContainer = styled.div`
   grid-area: formik;
   flex-direction: column;
   height: 100%;
-  max-height: 67vh;
+  max-height: 63vh;
   overflow-y: hidden;
 
   &:hover {

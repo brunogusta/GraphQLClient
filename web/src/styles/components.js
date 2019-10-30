@@ -6,12 +6,14 @@ export const Container = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows:
     minmax(60px, 10vh)
-    minmax(70px, 8vh)
+    minmax(70px, 10vh)
+    minmax(60px, 10vh)
     minmax(400px, 79vh)
     minmax(30px, 3vh);
   grid-template-areas:
     'header'
     'nav'
+    'logedUser'
     'inputs'
     'footer';
 `;

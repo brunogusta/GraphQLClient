@@ -38,7 +38,7 @@ export const TableContainer = styled.div`
   position: relative;
   margin-top: 10px;
   width: 100%;
-  max-height: 90%;
+  max-height: 85%;
   overflow-y: auto;
 
   tbody {

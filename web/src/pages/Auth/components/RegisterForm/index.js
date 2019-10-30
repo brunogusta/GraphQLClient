@@ -16,8 +16,6 @@ import {
   ResponseTextSuccess
 } from './styles';
 
-import { Types as RegisterTypes } from '../../../../store/ducks/userRegister';
-
 const REGISTER_MUTATION = gql`
   mutation($nome: String!, $email: String!, $senha: String!) {
     registrarUsuario(dados: { nome: $nome, email: $email, senha: $senha }) {
@@ -35,7 +33,8 @@ export default function RegisterForm() {
   const [requestData, useRequestData] = useState({
     perfilData: {},
     registerSuccess: false,
-    registerError: false
+    registerError: false,
+    errorMessage: ''
   });
 
   const { nome, email, senha } = requestData.perfilData;
@@ -47,18 +46,19 @@ export default function RegisterForm() {
       senha
     },
     errorPolicy: 'all',
-    onError: error => {
-      RegisterFail();
+    onError: ({ graphQLErrors }) => {
+      RegisterFail(graphQLErrors[0].message);
     },
     onCompleted: ({ registrarUsuario }) => {
       RegisterSuccess();
     }
   });
 
-  const RegisterFail = () => {
+  const RegisterFail = error => {
     useRequestData({
       ...requestData,
       registerError: true,
+      errorMessage: error,
       RegisterSuccess: false
     });
   };
@@ -182,7 +182,7 @@ export default function RegisterForm() {
 
         {requestData.registerError && (
           <ResponseTextError registerError={requestData.registerError}>
-            <p>Unable to register, please check the data informed.</p>
+            <p>{requestData.errorMessage}</p>
           </ResponseTextError>
         )}
 
