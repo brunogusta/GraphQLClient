@@ -8,6 +8,7 @@ export const Container = styled.div`
   align-items: center;
   grid-area: footer;
 
+  z-index: 10;
   p {
     margin-left: 5px;
     height: 10px;

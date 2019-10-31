@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -11,13 +11,15 @@ import {
   FormContainer,
   ResultsContainer,
   TextError,
-  LoginButton
+  LoginButton,
+  ResponseTextError,
+  ResponseTextSuccess
 } from './styles';
 
 import { Types as LoginTypes } from '../../../../store/ducks/userLoged';
 
 const LOGIN_QUERY = gql`
-  query($email: String!, $senha: String!) {
+  mutation($email: String!, $senha: String!) {
     login(dados: { email: $email, senha: $senha }) {
       id
       nome
@@ -33,7 +35,10 @@ const LOGIN_QUERY = gql`
 export default function LoginForm(props) {
   const [userData, useUserData] = useState({
     inputData: {},
-    requestData: {}
+    requestData: {},
+    errorMessage: '',
+    loginSuccess: false,
+    loginFail: false
   });
 
   const dispatch = useDispatch();
@@ -44,25 +49,41 @@ export default function LoginForm(props) {
     });
   };
 
+  const SetError = error => {
+    useUserData({
+      ...userData,
+      loginFail: true,
+      loginSuccess: false,
+      errorMessage: error
+    });
+  };
+
+  const SetSuccess = error => {
+    useUserData({
+      ...userData,
+      loginFail: false,
+      loginSuccess: true
+    });
+  };
+
   const { email, senha } = userData.inputData;
-  const [SendQuery, { data, errors, loading }] = useLazyQuery(LOGIN_QUERY, {
+  const [SendMutation, { data, errors, loading }] = useMutation(LOGIN_QUERY, {
     variables: {
       email,
       senha
     },
     errorPolicy: 'all',
-    onError: error => {
-      console.log(error);
+    onError: ({ graphQLErrors }) => {
+      SetError(graphQLErrors[0].message);
     },
     onCompleted: ({ login }) => {
-      console.log(login);
       localStorage.setItem('token', login.token);
+      SetSuccess();
       DisplayUserLoged(login);
     }
   });
 
   const HandleSubmitValues = ({ email, senha }) => {
-    console.log('funciona');
     useUserData({
       ...userData,
       inputData: {
@@ -71,7 +92,7 @@ export default function LoginForm(props) {
       }
     });
 
-    SendQuery();
+    SendMutation();
   };
 
   return (
@@ -84,7 +105,7 @@ export default function LoginForm(props) {
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('E-mail is not valid'),
-          senha: Yup.string().required('The senha is required')
+          senha: Yup.string().required('The password is required')
         })}
         render={({
           values,
@@ -132,6 +153,17 @@ export default function LoginForm(props) {
         <div>
           <h3>Results</h3>
         </div>
+
+        {userData.loginFail && (
+          <ResponseTextError loginError={userData.loginFail}>
+            <p>{userData.errorMessage}</p>
+          </ResponseTextError>
+        )}
+        {userData.loginSuccess && (
+          <ResponseTextSuccess loginSuccess={userData.loginSuccess}>
+            <p>Successful login</p>
+          </ResponseTextSuccess>
+        )}
       </ResultsContainer>
     </Container>
   );
