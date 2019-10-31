@@ -30,7 +30,7 @@ export const SearchButton = styled(SendButton)`
 `;
 
 export const ButtonContainer = styled.div`
-  width: 98vw;
+  width: 96vw;
   margin: auto;
 `;
 
@@ -38,8 +38,10 @@ export const TableContainer = styled.div`
   position: relative;
   margin-top: 10px;
   width: 100%;
-  max-height: 85%;
   overflow-y: auto;
+
+  max-height: 58vh;
+  min-height: 50vh;
 
   tbody {
     height: auto;
@@ -64,7 +66,7 @@ export const Table = styled.table`
   }
   td:nth-child(4),
   th:nth-child(4) {
-    width: 22vw;
+    width: 20vw;
   }
 
   th,
@@ -89,7 +91,7 @@ export const Table = styled.table`
   tbody {
     display: block;
     width: 100%;
-    overflow: auto;
+    height: 100%;
     margin-top: 40px;
   }
 `;

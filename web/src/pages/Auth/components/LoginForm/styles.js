@@ -18,7 +18,7 @@ export const Container = styled(BaseAnimation)`
   height: 100%;
   position: relative;
 
-  grid-template-columns: repeat(2, min(440px)) 1fr 1fr;
+  grid-template-columns: minmax(440px, 1fr) minmax(440px, 1fr);
   grid-template-rows: 1fr;
   grid-template-areas: 'formik result';
   column-gap: 15px;
@@ -82,4 +82,34 @@ export const ResultsContainer = styled.div`
 export const TextError = styled.p`
   font-weight: 100;
   color: #ea003f;
+`;
+
+export const ResponseTextError = styled.div`
+  display: flex;
+  background-color: ${loginError => (loginError ? '#ea003f' : null)};
+  align-items: center;
+  padding: 10px !important;
+  border-radius: 10px;
+  border-bottom: none !important;
+  margin-top: 20px;
+
+  p {
+    font-weight: bold;
+    color: #fff;
+    width: 100%;
+  }
+`;
+
+export const ResponseTextSuccess = styled.div`
+  background-color: ${loginSuccess => (loginSuccess ? '#5EA222' : null)};
+  padding: 10px !important;
+  border-radius: 10px;
+  border-bottom: none !important;
+  margin-top: 20px;
+
+  p {
+    font-weight: bold;
+    color: #fff;
+    width: 100%;
+  }
 `;
