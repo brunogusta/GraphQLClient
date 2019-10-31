@@ -2,39 +2,134 @@ import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { useLazyQuery } from 'react-apollo';
+import gql from 'graphql-tag';
+
 import {
   Container,
   Form,
   FormContainer,
   ResultsContainer,
   TextError,
-  SearchButton
+  SearchButton,
+  UserDataBox,
+  PerfilBox,
+  RequestTextError
 } from './styles';
+
+const USER_QUERY = gql`
+  query($id: Int, $email: String) {
+    usuario(filtro: { id: $id, email: $email }) {
+      id
+      nome
+      email
+      perfis {
+        nome
+        rotulo
+      }
+    }
+  }
+`;
 
 export default function Search() {
   const [handleError, useHandleError] = useState({
-    emptyInputs: false
+    emptyInputs: false,
+    floatNumber: false,
+    userNotFound: false
   });
 
+  const [inputData, useInputData] = useState({
+    id: '',
+    email: '',
+    loadResult: false
+  });
+
+  //Errors Handlers
   const NoFieldProvided = () => {
     useHandleError({
+      ...handleError,
       emptyInputs: true
     });
 
     setTimeout(() => Reset(), 2000);
   };
 
+  const ValidateInt = () => {
+    useHandleError({
+      ...handleError,
+      floatNumber: true
+    });
+
+    setTimeout(() => Reset(), 2000);
+  };
+
+  const UserNotFound = () => {
+    useHandleError({
+      ...handleError,
+      userNotFound: true
+    });
+  };
+
   const Reset = () => {
     useHandleError({
-      emptyInputs: false
+      ...handleError,
+      emptyInputs: false,
+      floatNumber: false
     });
+  };
+
+  const ResetResult = () => {
+    useInputData({ ...inputData, loadResult: false });
+    useHandleError({ ...handleError, userNotFound: false });
   };
 
   const HandleSubmitValues = ({ id, email }) => {
     if (id === email) {
       return NoFieldProvided();
     }
+
+    if (!Number.isInteger(id)) {
+      return ValidateInt();
+    }
+
+    if (inputData.loadResult) {
+      ResetResult();
+    }
+
+    HandleQuery(id, email);
   };
+
+  const HandleQuery = (id, email) => {
+    useInputData({
+      id,
+      email
+    });
+
+    SendQuery();
+  };
+
+  const LoadResult = () => {
+    useInputData({ ...inputData, loadResult: true });
+  };
+
+  const { id, email } = inputData;
+  const [SendQuery, { errors, data }] = useLazyQuery(USER_QUERY, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+    variables: {
+      id,
+      email
+    },
+    onCompleted: () => {
+      if (data.usuario === null) {
+        UserNotFound();
+      }
+
+      LoadResult();
+    }
+  });
+
+  console.log(data);
 
   return (
     <Container duration="1s">
@@ -59,7 +154,7 @@ export default function Search() {
             </div>
             <Form>
               <input
-                type="input"
+                type="number"
                 name="id"
                 placeholder="ID"
                 onChange={handleChange}
@@ -81,6 +176,9 @@ export default function Search() {
               {handleError.emptyInputs && (
                 <TextError>{'No fields provided'}</TextError>
               )}
+              {handleError.floatNumber && (
+                <TextError>{'ID must by an integer number'}</TextError>
+              )}
               <SearchButton type="submit" onClick={handleSubmit}>
                 <p>SEARCH</p>
               </SearchButton>
@@ -90,8 +188,29 @@ export default function Search() {
       />
       <ResultsContainer>
         <div>
-          <h3>Results</h3>
+          <h3>Result</h3>
         </div>
+        {handleError.userNotFound && (
+          <RequestTextError>
+            <p>No user found</p>
+          </RequestTextError>
+        )}
+        {inputData.loadResult && !handleError.userNotFound && (
+          <UserDataBox>
+            <p>ID: {data.usuario.id}</p>
+            <p>Name: {data.usuario.nome}</p>
+            <p>E-mail: {data.usuario.email}</p>
+            <PerfilBox>
+              <p>Perfil(s):</p>
+              {data.usuario.perfis.map(perfil => (
+                <>
+                  <p>Name: {perfil.nome}</p>
+                  <p>Label: {perfil.rotulo}</p>
+                </>
+              ))}
+            </PerfilBox>
+          </UserDataBox>
+        )}
       </ResultsContainer>
     </Container>
   );
