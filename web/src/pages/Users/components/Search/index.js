@@ -84,11 +84,12 @@ export default function Search() {
   };
 
   const HandleSubmitValues = ({ id, email }) => {
+    console.log(id);
     if (id === email) {
       return NoFieldProvided();
     }
 
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) && id !== '') {
       return ValidateInt();
     }
 
@@ -100,6 +101,12 @@ export default function Search() {
   };
 
   const HandleQuery = (id, email) => {
+    console.log(id);
+
+    if (id === '') {
+      id = 0;
+    }
+
     useInputData({
       id,
       email
@@ -203,10 +210,10 @@ export default function Search() {
             <PerfilBox>
               <p>Perfil(s):</p>
               {data.usuario.perfis.map(perfil => (
-                <>
+                <div key={Math.random()}>
                   <p>Name: {perfil.nome}</p>
                   <p>Label: {perfil.rotulo}</p>
-                </>
+                </div>
               ))}
             </PerfilBox>
           </UserDataBox>
