@@ -24,19 +24,44 @@ const USERS_QUERY = gql`
 `;
 
 export default function List() {
+  const [handleErrors, useHandleErrors] = useState({
+    haveError: false,
+    errorMessage: ''
+  });
+
+  const SetError = message => {
+    useHandleErrors({
+      haveError: true,
+      errorMessage: message
+    });
+  };
+
+  const ResetErrors = () => {
+    useHandleErrors({
+      haveError: false,
+      errorMessage: ''
+    });
+  };
+
   const [SendQuery, { data, errors }] = useLazyQuery(USERS_QUERY, {
     fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-    onError: () => {
-      console.log(errors);
+    onError: ({ graphQLErrors }) => {
+      SetError(graphQLErrors[0].message);
     }
   });
 
-  console.log(data);
+  const HandleSubmit = () => {
+    ResetErrors();
+    SendQuery();
+  };
+
   return (
     <Container>
       <ButtonContainer>
-        <SearchButton onClick={SendQuery}>LOAD USERS</SearchButton>
+        <SearchButton disabled={handleErrors.haveError} onClick={HandleSubmit}>
+          LOAD USERS
+        </SearchButton>
+        {handleErrors.haveError && <p>{handleErrors.errorMessage}</p>}
       </ButtonContainer>
       <TableContainer>
         <Table>
@@ -51,9 +76,8 @@ export default function List() {
           {data ? (
             <tbody>
               {data.usuarios.map(user => {
-                console.log(user);
                 return (
-                  <tr>
+                  <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.nome}</td>
                     <td>{user.email}</td>

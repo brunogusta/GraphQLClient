@@ -61,6 +61,11 @@ export const Form = styled.div`
 
 export const SearchButton = styled(SendButton)`
   margin-top: 30px;
+  opacity: ${props => (props.disabled ? '0.5' : '1')};
+
+  &:active {
+    background-color: ${props => (props.disabled ? '' : '#d741a6')};
+  }
 `;
 
 export const ResultsContainer = styled.div`

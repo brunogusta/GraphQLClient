@@ -14,7 +14,7 @@ const FadeInAnimation = keyframes`
 
 export const Container = styled(BaseAnimation)`
   height: 100%;
-  padding: 15px 0px 0px 0px;
+  padding: 10px 0px 0px 0px;
 
   animation-name: ${FadeInAnimation};
   position: relative;
@@ -27,11 +27,25 @@ export const SearchButton = styled(SendButton)`
   padding: 1px;
   font-weight: bold;
   font-size: 13px;
+  opacity: ${props => (props.disabled ? 0.5 : 1)};
+
+  &:active {
+    background-color: ${props => (props.disabled ? '' : '#d741a6')};
+  }
 `;
 
 export const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 96vw;
   margin: auto;
+
+  p {
+    margin-left: 10px;
+    color: #c1003e;
+    font-weight: bold;
+  }
 `;
 
 export const TableContainer = styled.div`
@@ -40,8 +54,8 @@ export const TableContainer = styled.div`
   width: 100%;
   overflow-y: auto;
 
-  max-height: 58vh;
-  min-height: 50vh;
+  max-height: 48vh;
+  min-height: 44vh;
 
   tbody {
     height: auto;

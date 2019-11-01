@@ -35,7 +35,9 @@ export default function Search() {
   const [handleError, useHandleError] = useState({
     emptyInputs: false,
     floatNumber: false,
-    userNotFound: false
+    userNotFound: false,
+    noAdm: false,
+    errorMessage: ''
   });
 
   const [inputData, useInputData] = useState({
@@ -43,6 +45,14 @@ export default function Search() {
     email: '',
     loadResult: false
   });
+
+  const NoAdmin = message => {
+    useHandleError({
+      ...handleError,
+      noAdm: true,
+      errorMessage: message
+    });
+  };
 
   //Errors Handlers
   const NoFieldProvided = () => {
@@ -80,11 +90,15 @@ export default function Search() {
 
   const ResetResult = () => {
     useInputData({ ...inputData, loadResult: false });
-    useHandleError({ ...handleError, userNotFound: false });
+    useHandleError({
+      ...handleError,
+      userNotFound: false,
+      errorMessage: '',
+      noAdm: false
+    });
   };
 
   const HandleSubmitValues = ({ id, email }) => {
-    console.log(id);
     if (id === email) {
       return NoFieldProvided();
     }
@@ -93,16 +107,12 @@ export default function Search() {
       return ValidateInt();
     }
 
-    if (inputData.loadResult) {
-      ResetResult();
-    }
+    ResetResult();
 
     HandleQuery(id, email);
   };
 
   const HandleQuery = (id, email) => {
-    console.log(id);
-
     if (id === '') {
       id = 0;
     }
@@ -122,10 +132,12 @@ export default function Search() {
   const { id, email } = inputData;
   const [SendQuery, { errors, data }] = useLazyQuery(USER_QUERY, {
     fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
     variables: {
       id,
       email
+    },
+    onError: ({ graphQLErrors }) => {
+      NoAdmin(graphQLErrors[0].message);
     },
     onCompleted: () => {
       if (data.usuario === null) {
@@ -135,8 +147,6 @@ export default function Search() {
       LoadResult();
     }
   });
-
-  console.log(data);
 
   return (
     <Container duration="1s">
@@ -200,6 +210,11 @@ export default function Search() {
         {handleError.userNotFound && (
           <RequestTextError>
             <p>No user found</p>
+          </RequestTextError>
+        )}
+        {handleError.noAdm && (
+          <RequestTextError>
+            <p>{handleError.errorMessage}</p>
           </RequestTextError>
         )}
         {inputData.loadResult && !handleError.userNotFound && (

@@ -61,6 +61,10 @@ export const Form = styled.div`
 
 export const LoginButton = styled(SendButton)`
   margin-top: 30px;
+
+  &:active {
+    background-color: #d741a6;
+  }
 `;
 
 export const ResultsContainer = styled.div`

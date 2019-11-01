@@ -6,6 +6,8 @@ import { Types as LoginTypes } from '../../store/ducks/userLoged';
 
 import { Container, NoLogedUser } from './styles';
 
+import history from '../../routes/history';
+
 function LogedUser(props) {
   const { isLoged, userData } = useSelector(state => state.userLoged);
 
@@ -19,9 +21,12 @@ function LogedUser(props) {
     });
 
     window.location.reload(false);
+
+    history.push('/');
   };
 
   if (isLoged) {
+    console.log(userData);
     return (
       <Container>
         <div>

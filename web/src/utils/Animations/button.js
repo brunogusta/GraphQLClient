@@ -11,8 +11,4 @@ export const SendButton = styled.button`
   padding: 5px;
   border: none;
   border-radius: 8px;
-
-  &:active {
-    background-color: #d741a6;
-  }
 `;

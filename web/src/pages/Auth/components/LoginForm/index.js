@@ -78,6 +78,11 @@ export default function LoginForm(props) {
     },
     onCompleted: ({ login }) => {
       localStorage.setItem('token', login.token);
+      localStorage.setItem('nome', login.nome);
+      localStorage.setItem('email', login.email);
+      localStorage.setItem('perfis', JSON.stringify(login.perfis));
+      localStorage.setItem('loged', 'true');
+
       SetSuccess();
       DisplayUserLoged(login);
     }
