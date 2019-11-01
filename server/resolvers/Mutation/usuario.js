@@ -44,6 +44,7 @@ const mutations = {
   },
   async novoUsuario(_, { dados }, ctx) {
     ctx && ctx.validarAdmin();
+
     try {
       const idsPerfis = [];
 

@@ -26,13 +26,15 @@ module.exports = async ({ req }) => {
     admin = usuario.perfis.includes('admin');
   }
 
-  const err = new Error('Acesso negado!');
+  const err = new Error('User is not an administrator.');
+  const userErr = new Error('Comum user cannot search other users');
+  const noUserErr = new Error('You must be logged in to perform the search.');
 
   return {
     usuario,
     admin,
     validarUsuario() {
-      if (!usuario) throw err;
+      if (!usuario) throw noUserErr;
     },
     validarAdmin() {
       if (!admin) throw err;
@@ -40,13 +42,13 @@ module.exports = async ({ req }) => {
     validarUsuarioFiltro(filtro) {
       if (admin) return;
 
-      if (!usuario) throw err;
-      if (!filtro) throw err;
+      if (!usuario) throw noUserErr;
+      if (!filtro) throw userErr;
 
       const { id, email } = filtro;
-      if (!id && !email) throw err;
-      if (id && id !== usuario.id) throw err;
-      if (email && email !== usuario.email) throw err;
+      if (!id && !email) throw userErr;
+      if (id && id !== usuario.id) throw userErr;
+      if (email && email !== usuario.email) throw userErr;
     }
   };
 };
