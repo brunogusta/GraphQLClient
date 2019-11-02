@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { useMutation, useLazyQuery } from 'react-apollo';
+import gql from 'graphql-tag';
+
 import {
   Container,
   Form,
@@ -9,7 +12,7 @@ import {
   SearchTitle,
   ResultsContainer,
   TextError,
-  SearchButton,
+  NewUserButton,
   EmailInput,
   NameInput,
   DropDawnInput,
@@ -17,21 +20,39 @@ import {
   GetPerfilsButton
 } from './styles';
 
+const PERFIL_QUERY = gql`
+  query {
+    perfis {
+      nome
+    }
+  }
+`;
+
+const NEW_USER = gql`
+  mutation(
+    $nome: String!
+    $email: String!
+    $senha: String!
+    $perfis: [PerfilFiltro]
+  ) {
+    novoUsuario(
+      dados: { nome: $nome, email: $email, senha: $senha, perfis: $perfis }
+    ) {
+      nome
+      email
+      perfis {
+        nome
+      }
+    }
+  }
+`;
+
 export default function NewForm() {
   const [handleInputEvents, useHandleInputEvents] = useState({
-    options: [{ label: 'Admin' }, { label: 'Comum' }],
-    selected: null
+    options: [],
+    selected: null,
+    data: {}
   });
-
-  const HandleSubmitValues = values => {
-    const { label } = handleInputEvents.selected;
-
-    const NewObject = {
-      name: values.name,
-      email: values.email,
-      perfil: label
-    };
-  };
 
   const SetPerfil = value => {
     useHandleInputEvents({
@@ -40,17 +61,90 @@ export default function NewForm() {
     });
   };
 
+  const LoadPerfils = options => {
+    useHandleInputEvents({
+      ...handleInputEvents,
+      options
+    });
+  };
+
+  const [SendPerfilsQuery] = useLazyQuery(PERFIL_QUERY, {
+    fetchPolicy: 'no-cache',
+    onCompleted: data => {
+      const FormatedOptions = data.perfis.map(perfil => {
+        const labels = {
+          label: perfil.nome
+        };
+
+        return labels;
+      });
+
+      LoadPerfils(FormatedOptions);
+    }
+  });
+
+  const { nome, email, senha, perfis } = handleInputEvents.data;
+  console.log(nome);
+  const [SendNewUserMutation] = useMutation(NEW_USER, {
+    variables: {
+      nome,
+      email,
+      senha,
+      perfis
+    },
+    fetchPolicy: 'no-cache',
+    onError: ({ graphQLErrors }) => {
+      console.log(graphQLErrors);
+    },
+    onCompleted: data => {
+      console.log(data);
+    }
+  });
+
+  const HandleSubmitValues = async values => {
+    let labels = [];
+
+    const label = handleInputEvents.selected;
+
+    const formatedPerfil = () => {
+      if (label) {
+        labels.push(label);
+
+        const options = labels.map(value => ({
+          nome: value.label
+        }));
+
+        return options;
+      } else return null;
+    };
+
+    const data = {
+      nome: values.name,
+      email: values.email,
+      senha: values.password,
+      perfis: formatedPerfil()
+    };
+
+    console.log(data);
+    await useHandleInputEvents({
+      ...handleInputEvents,
+      data
+    });
+
+    SendNewUserMutation();
+  };
   return (
     <Container duration="1s">
       <Formik
         initialValues={{
           name: '',
           email: '',
-          password: '',
-          confirmPassword: '',
-          perfil: ''
+          password: ''
         }}
-        onSubmit={values => HandleSubmitValues(values)}
+        onSubmit={(values, actions) => {
+          HandleSubmitValues(values);
+          actions.resetForm();
+        }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('The name is required'),
           email: Yup.string()
@@ -118,10 +212,15 @@ export default function NewForm() {
                 placeholder="Chose the perfil"
                 value={handleInputEvents.selected}
               />
-              <GetPerfilsButton type="submit">LOAD PERFILS</GetPerfilsButton>
-              <SearchButton type="submit" onClick={handleSubmit}>
+              <GetPerfilsButton onClick={SendPerfilsQuery} type="submit">
+                LOAD PERFILS
+              </GetPerfilsButton>
+              <NewUserButton
+                type="submit"
+                onClick={() => HandleSubmitValues(values)}
+              >
                 <p>CREATE NEW USER</p>
-              </SearchButton>
+              </NewUserButton>
             </Form>
           </FormContainer>
         )}

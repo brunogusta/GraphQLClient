@@ -32,12 +32,15 @@ export const FormContainer = styled.div`
   grid-area: formik;
   flex-direction: column;
   height: 100%;
+  max-height: 57vh;
 
   padding: 10px 0px 0px 0px;
 
   h3 {
     color: #464646;
   }
+
+  overflow-y: auto;
 `;
 
 export const SearchTitle = styled.div`
@@ -101,9 +104,13 @@ export const GetPerfilsButton = styled(SendButton)`
     background-color: #444;
   }
 `;
-export const SearchButton = styled(SendButton)`
+export const NewUserButton = styled(SendButton)`
   margin-top: 10px;
   font-size: 20px;
+
+  &:active {
+    background-color: ${props => (props.disabled ? '' : '#d741a6')};
+  }
 `;
 
 export const ResultsContainer = styled.div`
