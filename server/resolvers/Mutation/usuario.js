@@ -44,6 +44,7 @@ const mutations = {
   },
   async novoUsuario(_, { dados }, ctx) {
     ctx && ctx.validarAdmin();
+    console.log(dados);
 
     try {
       const idsPerfis = [];
@@ -68,6 +69,7 @@ const mutations = {
       dados.senha = bcrypt.hashSync(dados.senha, salt);
 
       delete dados.perfis;
+
       const [id] = await db('usuarios').insert(dados);
 
       for (let perfil_id of idsPerfis) {

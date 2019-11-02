@@ -16,8 +16,8 @@ from {
 export const Container = styled(BaseAnimation)`
   display: grid;
   position: relative;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: minmax(60px, 1fr) minmax(500px, 1fr);
+  grid-template-columns: 1fr minmax(600px, 1fr);
+  grid-template-rows: minmax(60px, 5vh) minmax(300px, 8fr);
   grid-template-areas:
     'navigation navigation'
     'form form';

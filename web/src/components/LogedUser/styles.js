@@ -7,6 +7,7 @@ export const Container = styled.div`
   margin-top: 10px;
   height: 100%;
   width: 100%;
+  min-width: 600px;
   margin: 0 auto;
   padding: 0 20px;
   grid-area: logedUser;

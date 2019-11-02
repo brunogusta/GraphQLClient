@@ -13,11 +13,17 @@ const FadeInAnimation = keyframes`
 `;
 
 export const Container = styled(BaseAnimation)`
-  height: 100%;
-  padding: 10px 0px 0px 0px;
+  display: grid;
+  position: relative;
+  grid-template-columns: minmax(600px, 1fr);
+  grid-template-rows: 60px minmax(300px, 45vh);
+  grid-template-areas:
+    'button'
+    'list';
+
+  padding: 10px 20px 0px 20px;
 
   animation-name: ${FadeInAnimation};
-  position: relative;
 `;
 
 export const SearchButton = styled(SendButton)`
@@ -39,7 +45,9 @@ export const ButtonContainer = styled.div`
   flex-direction: row;
   align-items: center;
   width: 96vw;
+  min-width: 600px;
   margin: auto;
+  grid-area: button;
 
   p {
     margin-left: 10px;
@@ -49,14 +57,9 @@ export const ButtonContainer = styled.div`
 `;
 
 export const TableContainer = styled.div`
-  position: relative;
-  margin-top: 10px;
-  width: 100%;
+  grid-area: list;
+  min-width: 600px;
   overflow-y: auto;
-
-  max-height: 48vh;
-  min-height: 44vh;
-
   tbody {
     height: auto;
   }
@@ -69,18 +72,22 @@ export const Table = styled.table`
   td:nth-child(1),
   th:nth-child(1) {
     width: 25vw;
+    min-width: 200px;
   }
   td:nth-child(2),
   th:nth-child(2) {
     width: 25vw;
+    min-width: 200px;
   }
   td:nth-child(3),
   th:nth-child(3) {
     width: 25vw;
+    min-width: 200px;
   }
   td:nth-child(4),
   th:nth-child(4) {
     width: 20vw;
+    min-width: 200px;
   }
 
   th,
