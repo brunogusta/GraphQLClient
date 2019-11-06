@@ -17,101 +17,143 @@ import {
   NameInput,
   DropDawnInput,
   PassInput,
-  GetPerfilsButton
+  GetPerfilsButton,
+  UserDataBox,
+  PerfilBox,
+  RequestTextError
 } from './styles';
 
 const PERFIL_QUERY = gql`
   query {
-    perfis {
-      nome
+    perfils {
+      name
     }
   }
 `;
 
 const NEW_USER = gql`
   mutation(
-    $nome: String!
+    $name: String!
     $email: String!
-    $senha: String!
-    $perfis: [PerfilFiltro]
+    $password: String!
+    $perfils: [PerfilFilter]
   ) {
-    novoUsuario(
-      dados: { nome: $nome, email: $email, senha: $senha, perfis: $perfis }
+    newUser(
+      data: {
+        name: $name
+        email: $email
+        password: $password
+        perfils: $perfils
+      }
     ) {
-      nome
+      id
+      name
       email
-      perfis {
-        nome
+      perfils {
+        name
+        label
       }
     }
   }
 `;
 
 export default function NewForm() {
-  const [handleInputEvents, useHandleInputEvents] = useState({
-    options: [],
-    selected: null,
-    data: {}
+  const [error, setError] = useState({
+    emptyInputs: false,
+    floatNumber: false,
+    noAdm: false,
+    errorMessage: ''
   });
 
-  const SetPerfil = value => {
-    useHandleInputEvents({
-      ...handleInputEvents,
+  const [inputEvents, setInputEvents] = useState({
+    options: [],
+    selected: null,
+    data: {},
+    isLoaded: false
+  });
+
+  const setPerfil = value => {
+    setInputEvents({
+      ...inputEvents,
       selected: value
     });
   };
 
-  const LoadPerfils = options => {
-    useHandleInputEvents({
-      ...handleInputEvents,
-      options
-    });
-  };
-
-  const [SendPerfilsQuery] = useLazyQuery(PERFIL_QUERY, {
+  const [sendPerfilsQuery] = useLazyQuery(PERFIL_QUERY, {
     fetchPolicy: 'no-cache',
+    onError: ({ graphQLErrors }) => {
+      setError({
+        ...error,
+        noAdm: true,
+        errorMessage: graphQLErrors[0].message
+      });
+    },
     onCompleted: data => {
-      const FormatedOptions = data.perfis.map(perfil => {
+      console.log(data);
+      const formatedOptions = data.perfils.map(perfil => {
         const labels = {
-          label: perfil.nome
+          label: perfil.name
         };
 
         return labels;
       });
 
-      LoadPerfils(FormatedOptions);
+      setInputEvents({
+        ...inputEvents,
+        options: formatedOptions
+      });
+
+      setError({
+        ...error,
+        userNotFound: false,
+        errorMessage: '',
+        noAdm: false
+      });
     }
   });
 
-  const { nome, email, senha, perfis } = handleInputEvents.data;
-  console.log(nome);
-  const [SendNewUserMutation] = useMutation(NEW_USER, {
+  const { name, email, password, perfils } = inputEvents.data;
+  const [sendNewUserMutation, { data }] = useMutation(NEW_USER, {
     variables: {
-      nome,
+      name,
       email,
-      senha,
-      perfis
+      password,
+      perfils
     },
     fetchPolicy: 'no-cache',
     onError: ({ graphQLErrors }) => {
-      console.log(graphQLErrors);
+      setError({
+        ...error,
+        noAdm: true,
+        errorMessage: graphQLErrors[0].message
+      });
     },
-    onCompleted: data => {
-      console.log(data);
+    onCompleted: () => {
+      setInputEvents({ ...inputEvents, isLoaded: true });
     }
   });
 
-  const HandleSubmitValues = async values => {
+  const resetResult = () => {
+    setInputEvents({ ...inputEvents, isLoaded: false });
+    setError({
+      ...error,
+      userNotFound: false,
+      errorMessage: '',
+      noAdm: false
+    });
+  };
+
+  const handleSubmitValues = async values => {
     let labels = [];
 
-    const label = handleInputEvents.selected;
+    const label = inputEvents.selected;
 
     const formatedPerfil = () => {
       if (label) {
         labels.push(label);
 
         const options = labels.map(value => ({
-          nome: value.label
+          name: value.label
         }));
 
         return options;
@@ -119,19 +161,21 @@ export default function NewForm() {
     };
 
     const data = {
-      nome: values.name,
+      name: values.name,
       email: values.email,
-      senha: values.password,
-      perfis: formatedPerfil()
+      password: values.password,
+      perfils: formatedPerfil()
     };
 
     console.log(data);
-    await useHandleInputEvents({
-      ...handleInputEvents,
+    resetResult();
+
+    await setInputEvents({
+      ...inputEvents,
       data
     });
 
-    SendNewUserMutation();
+    sendNewUserMutation();
   };
   return (
     <Container duration="1s">
@@ -142,7 +186,8 @@ export default function NewForm() {
           password: ''
         }}
         onSubmit={(values, actions) => {
-          HandleSubmitValues(values);
+          console.log('eu');
+          handleSubmitValues(values);
           actions.resetForm();
         }}
         validationSchema={Yup.object().shape({
@@ -150,14 +195,7 @@ export default function NewForm() {
           email: Yup.string()
             .email('E-mail is not valid')
             .required('The e-mail is required'),
-          password: Yup.string().required('The password is required'),
-          confirmPassword: Yup.string().test(
-            '',
-            'The password is diferent',
-            function test(value) {
-              return this.parent.password === value;
-            }
-          )
+          password: Yup.string().required('The password is required')
         })}
         render={({
           values,
@@ -207,18 +245,15 @@ export default function NewForm() {
 
               <DropDawnInput
                 name="perfil"
-                options={handleInputEvents.options}
-                onChange={SetPerfil}
+                options={inputEvents.options}
+                onChange={setPerfil}
                 placeholder="Chose the perfil"
-                value={handleInputEvents.selected}
+                value={inputEvents.selected}
               />
-              <GetPerfilsButton onClick={SendPerfilsQuery} type="submit">
+              <GetPerfilsButton onClick={sendPerfilsQuery} type="submit">
                 LOAD PERFILS
               </GetPerfilsButton>
-              <NewUserButton
-                type="submit"
-                onClick={() => HandleSubmitValues(values)}
-              >
+              <NewUserButton type="submit" onClick={handleSubmit}>
                 <p>CREATE NEW USER</p>
               </NewUserButton>
             </Form>
@@ -229,6 +264,27 @@ export default function NewForm() {
         <div>
           <h3>Results</h3>
         </div>
+        {error.noAdm && (
+          <RequestTextError>
+            <p>{error.errorMessage}</p>
+          </RequestTextError>
+        )}
+        {inputEvents.isLoaded && (
+          <UserDataBox>
+            <p>ID: {data.newUser.id}</p>
+            <p>Name: {data.newUser.name}</p>
+            <p>E-mail: {data.newUser.email}</p>
+            <PerfilBox>
+              <p>Perfil(s):</p>
+              {data.newUser.perfils.map(perfil => (
+                <div key={Math.random()}>
+                  <p>Name: {perfil.name}</p>
+                  <p>Label: {perfil.label}</p>
+                </div>
+              ))}
+            </PerfilBox>
+          </UserDataBox>
+        )}
       </ResultsContainer>
     </Container>
   );

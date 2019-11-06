@@ -12,56 +12,48 @@ import {
 
 const USERS_QUERY = gql`
   query {
-    usuarios {
+    users {
       id
-      nome
+      name
       email
-      perfis {
-        nome
+      perfils {
+        name
       }
     }
   }
 `;
 
 export default function List() {
-  const [handleErrors, useHandleErrors] = useState({
+  const [error, setErrors] = useState({
     haveError: false,
     errorMessage: ''
   });
 
-  const SetError = message => {
-    useHandleErrors({
-      haveError: true,
-      errorMessage: message
-    });
-  };
-
-  const ResetErrors = () => {
-    useHandleErrors({
-      haveError: false,
-      errorMessage: ''
-    });
-  };
-
-  const [SendQuery, { data, errors }] = useLazyQuery(USERS_QUERY, {
+  const [sendQuery, { data, errors }] = useLazyQuery(USERS_QUERY, {
     fetchPolicy: 'no-cache',
     onError: ({ graphQLErrors }) => {
-      SetError(graphQLErrors[0].message);
+      setErrors({
+        haveError: true,
+        errorMessage: graphQLErrors[0].message
+      });
     }
   });
 
-  const HandleSubmit = () => {
-    ResetErrors();
-    SendQuery();
+  const handleSubmit = () => {
+    setErrors({
+      haveError: false,
+      errorMessage: ''
+    });
+    sendQuery();
   };
 
   return (
     <Container>
       <ButtonContainer>
-        <SearchButton disabled={handleErrors.haveError} onClick={HandleSubmit}>
+        <SearchButton disabled={error.haveError} onClick={handleSubmit}>
           LOAD USERS
         </SearchButton>
-        {handleErrors.haveError && <p>{handleErrors.errorMessage}</p>}
+        {error.haveError && <p>{error.errorMessage}</p>}
       </ButtonContainer>
       <TableContainer>
         <Table>
@@ -75,13 +67,13 @@ export default function List() {
           </thead>
           {data ? (
             <tbody>
-              {data.usuarios.map(user => {
+              {data.users.map(user => {
                 return (
                   <tr key={user.id}>
                     <td>{user.id}</td>
-                    <td>{user.nome}</td>
+                    <td>{user.name}</td>
                     <td>{user.email}</td>
-                    <td>{user.perfis[0].nome}</td>
+                    <td>{user.perfils[0].name}</td>
                   </tr>
                 );
               })}

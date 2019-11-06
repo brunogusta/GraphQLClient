@@ -19,21 +19,21 @@ import {
 import { Types as LoginTypes } from '../../../../store/ducks/userLoged';
 
 const LOGIN_QUERY = gql`
-  mutation($email: String!, $senha: String!) {
-    login(dados: { email: $email, senha: $senha }) {
+  mutation($email: String!, $password: String!) {
+    login(data: { email: $email, password: $password }) {
       id
-      nome
+      name
       email
       token
-      perfis {
-        nome
+      perfils {
+        name
       }
     }
   }
 `;
 
-export default function LoginForm(props) {
-  const [userData, useUserData] = useState({
+export default function LoginForm() {
+  const [userData, setUserData] = useState({
     inputData: {},
     requestData: {},
     errorMessage: '',
@@ -42,75 +42,64 @@ export default function LoginForm(props) {
   });
 
   const dispatch = useDispatch();
-  const DisplayUserLoged = data => {
-    dispatch({
-      type: LoginTypes.LOGIN_ACTION,
-      payload: data
-    });
-  };
-
-  const SetError = error => {
-    useUserData({
-      ...userData,
-      loginFail: true,
-      loginSuccess: false,
-      errorMessage: error
-    });
-  };
-
-  const SetSuccess = error => {
-    useUserData({
-      ...userData,
-      loginFail: false,
-      loginSuccess: true
-    });
-  };
-
-  const { email, senha } = userData.inputData;
-  const [SendMutation, { data, errors, loading }] = useMutation(LOGIN_QUERY, {
+  const { email, password } = userData.inputData;
+  const [sendMutation, { data, errors, loading }] = useMutation(LOGIN_QUERY, {
     variables: {
       email,
-      senha
+      password
     },
-    errorPolicy: 'all',
     onError: ({ graphQLErrors }) => {
-      SetError(graphQLErrors[0].message);
+      setUserData({
+        ...userData,
+        loginFail: true,
+        loginSuccess: false,
+        errorMessage: graphQLErrors[0].message
+      });
     },
     onCompleted: ({ login }) => {
       localStorage.setItem('token', login.token);
-      localStorage.setItem('nome', login.nome);
+      localStorage.setItem('name', login.name);
       localStorage.setItem('email', login.email);
-      localStorage.setItem('perfis', JSON.stringify(login.perfis));
+      localStorage.setItem('perfils', JSON.stringify(login.perfils));
       localStorage.setItem('loged', 'true');
 
-      SetSuccess();
-      DisplayUserLoged(login);
+      setUserData({
+        ...userData,
+        loginFail: false,
+        loginSuccess: true
+      });
+
+      console.log(login);
+      dispatch({
+        type: LoginTypes.LOGIN_ACTION,
+        payload: login
+      });
     }
   });
 
-  const HandleSubmitValues = ({ email, senha }) => {
-    useUserData({
+  const handleSubmitValues = ({ email, password }) => {
+    setUserData({
       ...userData,
       inputData: {
         email,
-        senha
+        password
       }
     });
 
-    SendMutation();
+    sendMutation();
   };
 
   return (
     <Container>
       <Formik
-        initialValues={{ email: '', senha: '' }}
+        initialValues={{ email: '', password: '' }}
         onSubmit={(values, actions) => {
-          HandleSubmitValues(values);
+          handleSubmitValues(values);
           actions.resetForm();
         }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('E-mail is not valid'),
-          senha: Yup.string().required('The password is required')
+          password: Yup.string().required('The password is required')
         })}
         render={({
           values,
@@ -138,14 +127,14 @@ export default function LoginForm(props) {
               )}
               <input
                 type="password"
-                name="senha"
+                name="password"
                 placeholder="Password"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.senha}
+                value={values.password}
               />
-              {errors.senha && touched.senha && (
-                <TextError>{errors.senha}</TextError>
+              {errors.password && touched.password && (
+                <TextError>{errors.password}</TextError>
               )}
               <LoginButton type="submit" onClick={handleSubmit}>
                 <p>SING IN</p>

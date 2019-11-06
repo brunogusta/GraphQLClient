@@ -19,20 +19,20 @@ import {
 
 const USER_QUERY = gql`
   query($id: Int, $email: String) {
-    usuario(filtro: { id: $id, email: $email }) {
+    user(filter: { id: $id, email: $email }) {
       id
-      nome
+      name
       email
-      perfis {
-        nome
-        rotulo
+      perfils {
+        name
+        label
       }
     }
   }
 `;
 
 export default function Search() {
-  const [handleError, useHandleError] = useState({
+  const [error, setError] = useState({
     emptyInputs: false,
     floatNumber: false,
     userNotFound: false,
@@ -40,75 +40,59 @@ export default function Search() {
     errorMessage: ''
   });
 
-  const [inputData, useInputData] = useState({
+  const [inputData, setInputData] = useState({
     id: '',
     email: '',
     loadResult: false
   });
 
-  const NoAdmin = message => {
-    useHandleError({
-      ...handleError,
-      noAdm: true,
-      errorMessage: message
-    });
-  };
-
   //Errors Handlers
-  const NoFieldProvided = () => {
-    useHandleError({
-      ...handleError,
+  const noFieldProvided = () => {
+    setError({
+      ...error,
       emptyInputs: true
     });
 
     setTimeout(() => Reset(), 2000);
   };
 
-  const ValidateInt = () => {
-    useHandleError({
-      ...handleError,
+  const validateInt = () => {
+    setError({
+      ...error,
       floatNumber: true
     });
 
     setTimeout(() => Reset(), 2000);
   };
 
-  const UserNotFound = () => {
-    useHandleError({
-      ...handleError,
-      userNotFound: true
-    });
-  };
-
   const Reset = () => {
-    useHandleError({
-      ...handleError,
+    setError({
+      ...error,
       emptyInputs: false,
       floatNumber: false
     });
   };
 
   const ResetResult = () => {
-    useInputData({ ...inputData, loadResult: false });
-    useHandleError({
-      ...handleError,
+    setInputData({ ...inputData, loadResult: false });
+    setError({
+      ...error,
       userNotFound: false,
       errorMessage: '',
       noAdm: false
     });
   };
 
-  const HandleSubmitValues = ({ id, email }) => {
+  const handleSubmitValues = ({ id, email }) => {
     if (id === email) {
-      return NoFieldProvided();
+      return noFieldProvided();
     }
 
     if (!Number.isInteger(id) && id !== '') {
-      return ValidateInt();
+      return validateInt();
     }
 
     ResetResult();
-
     HandleQuery(id, email);
   };
 
@@ -117,34 +101,37 @@ export default function Search() {
       id = 0;
     }
 
-    useInputData({
+    setInputData({
       id,
       email
     });
 
-    SendQuery();
-  };
-
-  const LoadResult = () => {
-    useInputData({ ...inputData, loadResult: true });
+    sendQuery();
   };
 
   const { id, email } = inputData;
-  const [SendQuery, { errors, data }] = useLazyQuery(USER_QUERY, {
+  const [sendQuery, { errors, data }] = useLazyQuery(USER_QUERY, {
     fetchPolicy: 'no-cache',
     variables: {
       id,
       email
     },
     onError: ({ graphQLErrors }) => {
-      NoAdmin(graphQLErrors[0].message);
+      setError({
+        ...error,
+        noAdm: true,
+        errorMessage: graphQLErrors[0].message
+      });
     },
     onCompleted: () => {
-      if (data.usuario === null) {
-        UserNotFound();
+      if (data.user === null) {
+        setError({
+          ...error,
+          userNotFound: true
+        });
       }
 
-      LoadResult();
+      setInputData({ ...inputData, loadResult: true });
     }
   });
 
@@ -152,7 +139,7 @@ export default function Search() {
     <Container duration="1s">
       <Formik
         initialValues={{ id: '', email: '' }}
-        onSubmit={values => HandleSubmitValues(values)}
+        onSubmit={values => handleSubmitValues(values)}
         validationSchema={Yup.object().shape({
           id: Yup.number().typeError('ID must be a number'),
           email: Yup.string().email('E-mail is not valid')
@@ -190,10 +177,10 @@ export default function Search() {
               {errors.email && touched.email && (
                 <TextError>{errors.email}</TextError>
               )}
-              {handleError.emptyInputs && (
+              {error.emptyInputs && (
                 <TextError>{'No fields provided'}</TextError>
               )}
-              {handleError.floatNumber && (
+              {error.floatNumber && (
                 <TextError>{'ID must by an integer number'}</TextError>
               )}
               <SearchButton type="submit" onClick={handleSubmit}>
@@ -207,27 +194,27 @@ export default function Search() {
         <div>
           <h3>Result</h3>
         </div>
-        {handleError.userNotFound && (
+        {error.userNotFound && (
           <RequestTextError>
             <p>No user found</p>
           </RequestTextError>
         )}
-        {handleError.noAdm && (
+        {error.noAdm && (
           <RequestTextError>
-            <p>{handleError.errorMessage}</p>
+            <p>{error.errorMessage}</p>
           </RequestTextError>
         )}
-        {inputData.loadResult && !handleError.userNotFound && (
+        {inputData.loadResult && !error.userNotFound && (
           <UserDataBox>
-            <p>ID: {data.usuario.id}</p>
-            <p>Name: {data.usuario.nome}</p>
-            <p>E-mail: {data.usuario.email}</p>
+            <p>ID: {data.user.id}</p>
+            <p>Name: {data.user.name}</p>
+            <p>E-mail: {data.user.email}</p>
             <PerfilBox>
               <p>Perfil(s):</p>
-              {data.usuario.perfis.map(perfil => (
+              {data.user.perfils.map(perfil => (
                 <div key={Math.random()}>
-                  <p>Name: {perfil.nome}</p>
-                  <p>Label: {perfil.rotulo}</p>
+                  <p>Name: {perfil.name}</p>
+                  <p>Label: {perfil.label}</p>
                 </div>
               ))}
             </PerfilBox>

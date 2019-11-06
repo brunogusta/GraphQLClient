@@ -26,13 +26,12 @@ function LogedUser(props) {
   };
 
   if (isLoged) {
-    console.log(userData);
     return (
       <Container>
         <div>
-          <p>Name: {userData.nome}</p>
+          <p>Name: {userData.name}</p>
           <p>E-mail: {userData.email}</p>
-          <p>Perfil(s): {userData.perfis.map(perfil => perfil.nome)}</p>
+          <p>Perfil(s): {userData.perfils.map(perfil => perfil.name)}</p>
           <button onClick={LogOut}>EXIT</button>
         </div>
       </Container>

@@ -27,9 +27,9 @@ export default function Perfils() {
 
     if (loged) {
       const userData = {
-        nome: localStorage.getItem('nome'),
+        name: localStorage.getItem('name'),
         email: localStorage.getItem('email'),
-        perfis: JSON.parse(localStorage.getItem('perfis'))
+        perfils: JSON.parse(localStorage.getItem('perfils'))
       };
 
       LoadUser(userData);

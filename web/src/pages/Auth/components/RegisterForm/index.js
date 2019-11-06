@@ -17,70 +17,64 @@ import {
 } from './styles';
 
 const REGISTER_MUTATION = gql`
-  mutation($nome: String!, $email: String!, $senha: String!) {
-    registrarUsuario(dados: { nome: $nome, email: $email, senha: $senha }) {
+  mutation($name: String!, $email: String!, $password: String!) {
+    registerUser(data: { name: $name, email: $email, password: $password }) {
       id
-      nome
+      name
       email
-      perfis {
-        nome
+      perfils {
+        name
       }
     }
   }
 `;
 
 export default function RegisterForm() {
-  const [requestData, useRequestData] = useState({
+  const [requestData, setRequestData] = useState({
     perfilData: {},
     registerSuccess: false,
     registerError: false,
     errorMessage: ''
   });
 
-  const { nome, email, senha } = requestData.perfilData;
-
-  const [SendMutation, { data, loading }] = useMutation(REGISTER_MUTATION, {
-    variables: {
-      nome,
-      email,
-      senha
-    },
-    errorPolicy: 'all',
-    onError: ({ graphQLErrors }) => {
-      RegisterFail(graphQLErrors[0].message);
-    },
-    onCompleted: ({ registrarUsuario }) => {
-      RegisterSuccess();
+  const { name, email, password } = requestData.perfilData;
+  const [sendMutation, { errors, data, loading }] = useMutation(
+    REGISTER_MUTATION,
+    {
+      variables: {
+        name,
+        email,
+        password
+      },
+      onError: ({ graphQLErrors }) => {
+        setRequestData({
+          ...requestData,
+          registerError: true,
+          errorMessage: graphQLErrors[0].message,
+          RegisterSuccess: false
+        });
+      },
+      onCompleted: data => {
+        console.log(data);
+        setRequestData({
+          ...requestData,
+          registerSuccess: true,
+          registerError: false
+        });
+      }
     }
-  });
+  );
 
-  const RegisterFail = error => {
-    useRequestData({
-      ...requestData,
-      registerError: true,
-      errorMessage: error,
-      RegisterSuccess: false
-    });
-  };
-
-  const RegisterSuccess = () => {
-    useRequestData({
-      ...requestData,
-      registerSuccess: true,
-      registerError: false
-    });
-  };
-
-  const HandleSubmitValues = values => {
-    useRequestData({
+  const handleSubmitValues = values => {
+    setRequestData({
       perfilData: {
-        nome: values.name,
+        name: values.name,
         email: values.email,
-        senha: values.password
+        password: values.password
       }
     });
 
-    SendMutation();
+    sendMutation();
   };
 
   return (
@@ -93,7 +87,7 @@ export default function RegisterForm() {
           confirmPassword: ''
         }}
         onSubmit={(values, actions) => {
-          HandleSubmitValues(values);
+          handleSubmitValues(values);
           actions.resetForm();
         }}
         validationSchema={Yup.object().shape({
