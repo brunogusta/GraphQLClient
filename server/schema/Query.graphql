@@ -1,7 +1,7 @@
 # Pontos de entrada da sua API!
 type Query {
-  usuarios: [Usuario]
-  usuario(filtro: UsuarioFiltro!): Usuario
-  perfis: [Perfil]
-  perfil(filtro: PerfilFiltro!): Perfil
+  users: [User]
+  user(filter: UserFilter!): User
+  perfils: [Perfil]
+  perfil(filter: PerfilFilter!): Perfil
 }

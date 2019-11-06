@@ -1,30 +1,30 @@
 const db = require('../../config/db');
-const { perfil: obterPerfil } = require('../Query/perfil');
+const { perfil: getPerfil } = require('../Query/perfil');
 
 module.exports = {
-  async novoPerfil(_, { dados }, ctx) {
-    ctx && ctx.validarAdmin();
+  async newPerfil(_, { data }, ctx) {
+    ctx && ctx.adminValidate();
 
     try {
-      const [id] = await db('perfis').insert(dados);
-      return db('perfis')
+      const [id] = await db('perfils').insert(data);
+      return db('perfils')
         .where({ id })
         .first();
     } catch (e) {
       throw new Error(e.sqlMessage);
     }
   },
-  async excluirPerfil(_, args, ctx) {
-    ctx && ctx.validarAdmin();
+  async removePerfil(_, args, ctx) {
+    ctx && ctx.adminValidate();
 
     try {
-      const perfil = await obterPerfil(_, args);
+      const perfil = await getPerfil(_, args);
       if (perfil) {
         const { id } = perfil;
-        await db('usuarios_perfis')
-          .where({ perfil_id: id })
+        await db('users_perfils')
+          .where({ perfils_id: id })
           .delete();
-        await db('perfis')
+        await db('perfils')
           .where({ id })
           .delete();
       }
@@ -33,17 +33,17 @@ module.exports = {
       throw new Error(e.sqlMessage);
     }
   },
-  async alterarPerfil(_, { filtro, dados }, ctx) {
-    ctx && ctx.validarAdmin();
+  async updatePerfil(_, { filter, data }, ctx) {
+    ctx && ctx.adminValidate();
     try {
-      const perfil = await obterPerfil(_, { filtro });
+      const perfil = await getPerfil(_, { filter });
       if (perfil) {
         const { id } = perfil;
-        await db('perfis')
+        await db('perfils')
           .where({ id })
-          .update(dados);
+          .update(data);
       }
-      return { ...perfil, ...dados };
+      return { ...perfil, ...data };
     } catch (e) {
       throw new Error(e.sqlMessage);
     }

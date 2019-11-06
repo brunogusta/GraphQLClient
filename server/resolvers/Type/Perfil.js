@@ -1,13 +1,9 @@
-const db = require('../../config/db')
+const db = require('../../config/db');
 
 module.exports = {
-    usuarios(perfil) {
-        return db('usuarios')
-            .join(
-                'usuarios_perfis',
-                'usuarios.id',
-                'usuarios_perfis.usuario_id'
-            )
-            .where({ perfil_id: perfil.id })
-    }
-}
+  users(perfil) {
+    return db('users')
+      .join('users_perfils', 'users.id', 'users_perfils.user_id')
+      .where({ perfil_id: perfil.id });
+  }
+};

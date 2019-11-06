@@ -1,25 +1,25 @@
-const db = require('../../config/db')
+const db = require('../../config/db');
 
 module.exports = {
-    perfis(parent, args, ctx) {
-        ctx && ctx.validarAdmin()
-        return db('perfis')
-    },
-    perfil(_, { filtro }, ctx) {
-        ctx && ctx.validarAdmin()
-        
-        if(!filtro) return null
-        const { id, nome } = filtro
-        if(id) {
-            return db('perfis')
-                .where({ id })
-                .first()
-        } else if(nome) {
-            return db('perfis')
-                .where({ nome })
-                .first()
-        } else {
-            return null
-        }
+  perfils(parent, args, ctx) {
+    ctx && ctx.adminValidate();
+    return db('perfils');
+  },
+  perfil(_, { filter }, ctx) {
+    ctx && ctx.adminValidate();
+
+    if (!filter) return null;
+    const { id, name } = filter;
+    if (id) {
+      return db('perfils')
+        .where({ id })
+        .first();
+    } else if (name) {
+      return db('perfils')
+        .where({ name })
+        .first();
+    } else {
+      return null;
     }
-}
+  }
+};
