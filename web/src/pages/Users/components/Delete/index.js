@@ -2,48 +2,140 @@ import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { useMutation, useLazyQuery } from 'react-apollo';
+import gql from 'graphql-tag';
+
 import {
   Container,
   Form,
   FormContainer,
   ResultsContainer,
   TextError,
-  SearchButton
+  SearchButton,
+  UserDataBox,
+  RequestTextError
 } from './styles';
 
+const DELETE_MUTATION = gql`
+  mutation($id: Int, $emailFilter: String) {
+    removeUser(filter: { id: $id, email: $emailFilter }) {
+      id
+      name
+      email
+      perfils {
+        name
+        label
+      }
+    }
+  }
+`;
+
 export default function Delete() {
-  const [handleError, useHandleError] = useState({
-    emptyInputs: false
+  const [error, setError] = useState({
+    emptyInputs: false,
+    floatNumber: false,
+    errorMessage: ''
   });
 
-  const NoFieldProvided = () => {
-    useHandleError({
+  const [inputData, setInputData] = useState({
+    data: {},
+    isLoaded: false
+  });
+
+  const noFieldProvided = () => {
+    setError({
       emptyInputs: true
     });
 
-    setTimeout(() => Reset(), 2000);
+    setTimeout(() => reset(), 2000);
   };
 
-  const Reset = () => {
-    useHandleError({
+  const reset = () => {
+    setError({
       emptyInputs: false
     });
   };
 
-  const HandleSubmitValues = ({ id, email }) => {
-    if (id === email) {
-      return NoFieldProvided();
+  const resetResult = () => {
+    setInputData({ ...inputData, isLoaded: false });
+    setError({
+      ...error,
+      userNotFound: false,
+      errorMessage: '',
+      noAdm: false
+    });
+  };
+  const { id, emailFilter } = inputData.data;
+  const [sendDeleteMutation, { data }] = useMutation(DELETE_MUTATION, {
+    variables: {
+      id,
+      emailFilter
+    },
+    fetchPolicy: 'no-cache',
+    onError: ({ graphQLErrors }) => {
+      console.log(graphQLErrors);
+      setError({
+        ...error,
+        errorMessage: graphQLErrors[0].message
+      });
+    },
+    onCompleted: data => {
+      console.log(data);
+      if (data.removeUser === null) {
+        setError({
+          ...error,
+          errorMessage: 'No users found with this filter'
+        });
+
+        return;
+      }
+
+      setInputData({ ...inputData, isLoaded: true });
     }
+  });
+
+  const handleSubmitValues = async ({ id, emailFilter }) => {
+    resetResult();
+    if (id === emailFilter) {
+      return noFieldProvided();
+    }
+
+    if (!Number.isInteger(parseInt(id)) && id !== '') {
+      setError({
+        ...error,
+        floatNumber: true
+      });
+
+      setTimeout(() => reset(), 2000);
+      return;
+    }
+
+    if (id === '') {
+      id = 0;
+    }
+
+    const input = {
+      id: parseInt(id),
+      emailFilter
+    };
+
+    await setInputData({
+      ...inputData,
+      isLoaded: false,
+      data: input
+    });
+
+    sendDeleteMutation();
   };
 
   return (
     <Container duration="1s">
       <Formik
-        initialValues={{ id: '', email: '' }}
-        onSubmit={values => HandleSubmitValues(values)}
+        initialValues={{ id: '', emailFilter: '' }}
+        onSubmit={values => handleSubmitValues(values)}
         validationSchema={Yup.object().shape({
           id: Yup.number().typeError('ID must be a number'),
-          email: Yup.string().email('E-mail is not valid')
+          emailFilter: Yup.string().email('E-mail is not valid')
         })}
         render={({
           values,
@@ -59,7 +151,6 @@ export default function Delete() {
             </div>
             <Form>
               <input
-                type="input"
                 name="id"
                 placeholder="ID"
                 onChange={handleChange}
@@ -69,7 +160,7 @@ export default function Delete() {
               {errors.id && touched.id && <TextError>{errors.id}</TextError>}
               <input
                 type="email"
-                name="email"
+                name="emailFilter"
                 placeholder="E-mail"
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -78,8 +169,11 @@ export default function Delete() {
               {errors.email && touched.email && (
                 <TextError>{errors.email}</TextError>
               )}
-              {handleError.emptyInputs && (
+              {error.emptyInputs && (
                 <TextError>{'No fields provided'}</TextError>
+              )}
+              {error.floatNumber && (
+                <TextError>{'ID must by an integer number'}</TextError>
               )}
               <SearchButton type="submit" onClick={handleSubmit}>
                 <p>DELETE</p>
@@ -92,6 +186,18 @@ export default function Delete() {
         <div>
           <h3>Results</h3>
         </div>
+        {error.errorMessage && (
+          <RequestTextError>
+            <p>{error.errorMessage}</p>
+          </RequestTextError>
+        )}
+        {inputData.isLoaded && !error.errorMessage && (
+          <UserDataBox>
+            <p>
+              The user <strong>{data.removeUser.name}</strong> has ben deleted.
+            </p>
+          </UserDataBox>
+        )}
       </ResultsContainer>
     </Container>
   );

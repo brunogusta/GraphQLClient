@@ -9,11 +9,11 @@ const client = new ApolloClient({
         authorization: token ? `Bearer ${token}` : ''
       }
     });
+  },
+  onError: ({ networkError, graphQLErrors }) => {
+    console.log('graphQLErrors', graphQLErrors);
+    console.log('networkError', networkError);
   }
-  // onError: ({ networkError, graphQLErrors }) => {
-  //   console.log('graphQLErrors', graphQLErrors);
-  //   console.log('networkError', networkError);
-  // }
 });
 
 export default client;

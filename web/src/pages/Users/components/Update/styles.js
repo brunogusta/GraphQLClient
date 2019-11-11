@@ -19,8 +19,8 @@ export const Container = styled(BaseAnimation)`
   height: 100%;
   position: relative;
 
-  grid-template-columns: repeat(2, min(440px)) 1fr 1fr;
-  grid-template-rows: 1fr;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  grid-template-rows: minmax(200px, 1fr);
   grid-template-areas: 'formik result';
   column-gap: 15px;
 
@@ -31,8 +31,7 @@ export const FormContainer = styled.div`
   display: flex;
   grid-area: formik;
   flex-direction: column;
-  height: 100%;
-  max-height: 67vh;
+  height: 95%;
   overflow-y: hidden;
 
   &:hover {
@@ -142,7 +141,7 @@ export const ResultsContainer = styled.div`
   flex-direction: column;
   padding: 10px 0px 0px 0px;
 
-  div {
+  div:first-child {
     border-bottom: 2px solid #b1b1b1;
     padding-bottom: 3px;
 
@@ -155,4 +154,32 @@ export const ResultsContainer = styled.div`
 export const TextError = styled.p`
   font-weight: 100;
   color: #ea003f;
+`;
+
+export const UserDataBox = styled.div`
+  border: 1px solid #ccc;
+  width: 40vw;
+  padding: 15px;
+
+  margin: 20px auto;
+`;
+
+export const RequestTextError = styled.div`
+  display: flex;
+  margin-top: 10px;
+  background-color: #ea003f;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    font-weight: bold;
+    color: #fff;
+  }
+`;
+
+export const PerfilBox = styled.div`
+  margin-top: 3px;
+  padding: 3px;
+  border: 1px solid #f38bd1;
 `;

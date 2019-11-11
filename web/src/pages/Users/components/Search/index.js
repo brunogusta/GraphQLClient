@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -53,7 +53,7 @@ export default function Search() {
       emptyInputs: true
     });
 
-    setTimeout(() => Reset(), 2000);
+    setTimeout(() => reset(), 2000);
   };
 
   const validateInt = () => {
@@ -62,10 +62,10 @@ export default function Search() {
       floatNumber: true
     });
 
-    setTimeout(() => Reset(), 2000);
+    setTimeout(() => reset(), 2000);
   };
 
-  const Reset = () => {
+  const reset = () => {
     setError({
       ...error,
       emptyInputs: false,
@@ -73,7 +73,7 @@ export default function Search() {
     });
   };
 
-  const ResetResult = () => {
+  const resetResult = () => {
     setInputData({ ...inputData, loadResult: false });
     setError({
       ...error,
@@ -92,11 +92,11 @@ export default function Search() {
       return validateInt();
     }
 
-    ResetResult();
-    HandleQuery(id, email);
+    resetResult();
+    handleQuery(id, email);
   };
 
-  const HandleQuery = (id, email) => {
+  const handleQuery = (id, email) => {
     if (id === '') {
       id = 0;
     }
@@ -110,7 +110,7 @@ export default function Search() {
   };
 
   const { id, email } = inputData;
-  const [sendQuery, { errors, data }] = useLazyQuery(USER_QUERY, {
+  const [sendQuery, { data }] = useLazyQuery(USER_QUERY, {
     fetchPolicy: 'no-cache',
     variables: {
       id,

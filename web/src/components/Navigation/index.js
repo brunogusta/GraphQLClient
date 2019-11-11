@@ -35,8 +35,6 @@ export default function Navigation() {
   useEffect(() => {
     if (url.indexOf('users') !== -1) {
       return SetUsers('Users');
-    } else if (url.indexOf('perfils') !== -1) {
-      return SetPerfils('Perfils');
     } else {
       return SetAuth('Auth');
     }
@@ -60,14 +58,6 @@ export default function Navigation() {
         <i className="fas fa-users" />
         <p>USERS</p>
       </UsersButton>
-      <PerfilsButton
-        to="/perfils"
-        onClick={() => SetPerfils('Perfils')}
-        handleClick={handleClick}
-      >
-        <i className="fas fa-user-check" />
-        <p>PERFILS</p>
-      </PerfilsButton>
     </Container>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -89,7 +89,6 @@ export default function NewForm() {
       });
     },
     onCompleted: data => {
-      console.log(data);
       const formatedOptions = data.perfils.map(perfil => {
         const labels = {
           label: perfil.name
@@ -167,7 +166,6 @@ export default function NewForm() {
       perfils: formatedPerfil()
     };
 
-    console.log(data);
     resetResult();
 
     await setInputEvents({
@@ -186,7 +184,6 @@ export default function NewForm() {
           password: ''
         }}
         onSubmit={(values, actions) => {
-          console.log('eu');
           handleSubmitValues(values);
           actions.resetForm();
         }}

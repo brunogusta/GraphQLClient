@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
+import { useMutation, useLazyQuery } from 'react-apollo';
+import gql from 'graphql-tag';
+
 import {
   Container,
   Form,
@@ -16,51 +19,192 @@ import {
   GetPerfilsButton,
   IdInput,
   EmailFilterInput,
-  FilterContainer
+  FilterContainer,
+  UserDataBox,
+  RequestTextError,
+  PerfilBox
 } from './styles';
 
+const PERFIL_QUERY = gql`
+  query {
+    perfils {
+      name
+    }
+  }
+`;
+
+const UPDATE_MUTATION = gql`
+  mutation(
+    $id: Int
+    $name: String!
+    $email: String!
+    $emailFilter: String
+    $password: String!
+    $perfils: [PerfilFilter]
+  ) {
+    updateUser(
+      filter: { id: $id, email: $emailFilter }
+      data: {
+        name: $name
+        email: $email
+        password: $password
+        perfils: $perfils
+      }
+    ) {
+      id
+      name
+      email
+      perfils {
+        name
+        label
+      }
+    }
+  }
+`;
+
 export default function Update() {
-  const [handleInputEvents, useHandleInputEvents] = useState({
-    options: [{ label: 'Admin' }, { label: 'Comum' }],
-    selected: null,
-    emptyInputs: false
+  const [error, setError] = useState({
+    emptyInputs: false,
+    floatNumber: false,
+    errorMessage: ''
   });
 
-  const NoFieldProvided = () => {
-    useHandleInputEvents({
-      ...handleInputEvents,
+  const [inputData, setInputData] = useState({
+    options: [],
+    selected: null,
+    data: {},
+    isLoaded: false
+  });
+
+  const setPerfil = value => {
+    setInputData({
+      ...inputData,
+      selected: value
+    });
+  };
+
+  const [sendPerfilsQuery] = useLazyQuery(PERFIL_QUERY, {
+    fetchPolicy: 'no-cache',
+    onError: ({ graphQLErrors }) => {
+      setError({
+        ...error,
+        noAdm: true,
+        errorMessage: graphQLErrors[0].message
+      });
+    },
+    onCompleted: data => {
+      const formatedOptions = data.perfils.map(perfil => {
+        const labels = {
+          label: perfil.name
+        };
+
+        return labels;
+      });
+
+      setInputData({
+        ...inputData,
+        options: formatedOptions
+      });
+
+      setError({
+        ...error,
+        userNotFound: false,
+        errorMessage: '',
+        noAdm: false
+      });
+    }
+  });
+
+  const noFieldProvided = () => {
+    setInputData({
+      ...inputData,
       emptyInputs: true
     });
 
-    setTimeout(() => Reset(), 2000);
+    setTimeout(() => reset(), 2000);
   };
 
-  const Reset = () => {
-    useHandleInputEvents({
-      ...handleInputEvents,
+  const reset = () => {
+    setInputData({
+      ...inputData,
       emptyInputs: false
     });
   };
 
-  const HandleSubmitValues = values => {
-    if (values.id === values.emailFilter) {
-      return NoFieldProvided();
-    }
-
-    const { label } = handleInputEvents.selected;
-
-    const NewObject = {
-      name: values.name,
-      email: values.email,
-      perfil: label
-    };
+  const resetResult = () => {
+    setInputData({ ...inputData, isLoaded: false });
+    setError({
+      ...error,
+      userNotFound: false,
+      errorMessage: ''
+    });
   };
 
-  const SetPerfil = value => {
-    useHandleInputEvents({
-      ...handleInputEvents,
-      selected: value
+  const { id, emailFilter, name, email, password, perfils } = inputData.data;
+  const [sendUpdateUserMutation, { data }] = useMutation(UPDATE_MUTATION, {
+    variables: {
+      id,
+      emailFilter,
+      id,
+      name,
+      email,
+      password,
+      perfils
+    },
+    errorPolicy: 'all',
+    fetchPolicy: 'no-cache',
+    onError: ({ graphQLErrors }) => {
+      setError({
+        ...error,
+        errorMessage: graphQLErrors[0].message
+      });
+    },
+    onCompleted: data => {
+      if (data.updateUser === null) {
+        setError({
+          ...error,
+          errorMessage: 'No users found with this filter'
+        });
+
+        return;
+      }
+
+      setInputData({ ...inputData, isLoaded: true });
+    }
+  });
+
+  const handleSubmitValues = async values => {
+    resetResult();
+    if (values.id === values.emailFilter) {
+      return noFieldProvided();
+    }
+
+    const getLabel = () => {
+      if (inputData.selected) {
+        const { label } = inputData.selected;
+
+        return label;
+      } else {
+        return null;
+      }
+    };
+
+    const input = {
+      id: parseInt(values.id),
+      emailFilter: values.emailFilter,
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      perfil: getLabel()
+    };
+
+    await setInputData({
+      ...inputData,
+      isLoaded: false,
+      data: input
     });
+
+    sendUpdateUserMutation();
   };
 
   return (
@@ -75,7 +219,10 @@ export default function Update() {
           confirmPassword: '',
           perfil: ''
         }}
-        onSubmit={values => HandleSubmitValues(values)}
+        onSubmit={(values, actions) => {
+          handleSubmitValues(values);
+          actions.resetForm();
+        }}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('The name is required'),
           email: Yup.string()
@@ -151,15 +298,17 @@ export default function Update() {
               )}
               <DropDawnInput
                 name="perfil"
-                options={handleInputEvents.options}
-                onChange={SetPerfil}
+                options={inputData.options}
+                onChange={setPerfil}
                 placeholder="Chose the perfil"
-                value={handleInputEvents.selected}
+                value={inputData.selected}
               />
-              {handleInputEvents.emptyInputs && (
+              {inputData.emptyInputs && (
                 <TextError>No filter provided</TextError>
               )}
-              <GetPerfilsButton type="submit">LOAD PERFILS</GetPerfilsButton>
+              <GetPerfilsButton onClick={sendPerfilsQuery} type="submit">
+                LOAD PERFILS
+              </GetPerfilsButton>
               <SearchButton type="submit" onClick={handleSubmit}>
                 <p>UPDATE</p>
               </SearchButton>
@@ -171,6 +320,27 @@ export default function Update() {
         <div>
           <h3>Results</h3>
         </div>
+        {error.errorMessage && (
+          <RequestTextError>
+            <p>{error.errorMessage}</p>
+          </RequestTextError>
+        )}
+        {inputData.isLoaded && !error.errorMessage && (
+          <UserDataBox>
+            <p>ID: {data.updateUser.id}</p>
+            <p>Name: {data.updateUser.name}</p>
+            <p>E-mail: {data.updateUser.email}</p>
+            <PerfilBox>
+              <p>Perfil(s):</p>
+              {data.updateUser.perfils.map(perfil => (
+                <div key={perfil.name}>
+                  <p>Name: {perfil.name}</p>
+                  <p>Label: {perfil.label}</p>
+                </div>
+              ))}
+            </PerfilBox>
+          </UserDataBox>
+        )}
       </ResultsContainer>
     </Container>
   );

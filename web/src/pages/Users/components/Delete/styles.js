@@ -18,7 +18,7 @@ export const Container = styled(BaseAnimation)`
   height: 100%;
   position: relative;
 
-  grid-template-columns: repeat(2, min(440px)) 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(440px, 1fr));
   grid-template-rows: 1fr;
   grid-template-areas: 'formik result';
   column-gap: 15px;
@@ -74,7 +74,7 @@ export const ResultsContainer = styled.div`
   flex-direction: column;
   padding: 10px 0px 0px 0px;
 
-  div {
+  div:first-child {
     border-bottom: 2px solid #b1b1b1;
     padding-bottom: 3px;
 
@@ -87,4 +87,28 @@ export const ResultsContainer = styled.div`
 export const TextError = styled.p`
   font-weight: 100;
   color: #ea003f;
+`;
+
+export const UserDataBox = styled.div`
+  display: flex;
+  justify-content: center;
+  background-color: #5ea222;
+  width: 40vw;
+  padding: 15px;
+  margin: 20px auto;
+  color: #fff;
+`;
+
+export const RequestTextError = styled.div`
+  display: flex;
+  margin-top: 10px;
+  background-color: #ea003f;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    font-weight: bold;
+    color: #fff;
+  }
 `;

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import * as Yup from 'yup';
@@ -38,32 +37,29 @@ export default function RegisterForm() {
   });
 
   const { name, email, password } = requestData.perfilData;
-  const [sendMutation, { errors, data, loading }] = useMutation(
-    REGISTER_MUTATION,
-    {
-      variables: {
-        name,
-        email,
-        password
-      },
-      onError: ({ graphQLErrors }) => {
-        setRequestData({
-          ...requestData,
-          registerError: true,
-          errorMessage: graphQLErrors[0].message,
-          RegisterSuccess: false
-        });
-      },
-      onCompleted: data => {
-        console.log(data);
-        setRequestData({
-          ...requestData,
-          registerSuccess: true,
-          registerError: false
-        });
-      }
+  const [sendMutation] = useMutation(REGISTER_MUTATION, {
+    variables: {
+      name,
+      email,
+      password
+    },
+    onError: ({ graphQLErrors }) => {
+      setRequestData({
+        ...requestData,
+        registerError: true,
+        errorMessage: graphQLErrors[0].message,
+        RegisterSuccess: false
+      });
+    },
+    onCompleted: data => {
+      console.log(data);
+      setRequestData({
+        ...requestData,
+        registerSuccess: true,
+        registerError: false
+      });
     }
-  );
+  });
 
   const handleSubmitValues = values => {
     setRequestData({
