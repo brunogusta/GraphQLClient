@@ -115,6 +115,7 @@ UPDATE `your_databese_name`.`users_perfils` SET `perfil_id` = '2' WHERE (`user_i
 - [React](https://github.com/facebook/react) _(100% [Hooks](https://reactjs.org/docs/hooks-intro.html), zero classes)_
 - [Styled Components](https://www.styled-components.com/)
 - [Eslint](https://eslint.org/)
+- [Reactotron](https://infinite.red/reactotron)
 - [GraphQL](https://graphql.org/)
 - [Apollo](https://apollographql.com)
 - [Redux](https://github.com/reduxjs/react-redux)
