@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { Container, FormBox, NavBox } from './styles';
@@ -10,14 +10,8 @@ import RegisterForm from './components/RegisterForm';
 import { Types as LoginTypes } from '../../store/ducks/userLoged';
 
 export default function Auth() {
-  const dispatch = useDispatch();
-  const LoadUser = userData => {
-    dispatch({
-      type: LoginTypes.LOGIN_ACTION,
-      payload: userData
-    });
-  };
 
+  const dispatch = useDispatch();
   useEffect(() => {
     const loged = localStorage.getItem('loged');
 
@@ -28,9 +22,12 @@ export default function Auth() {
         perfils: JSON.parse(localStorage.getItem('perfils'))
       };
 
-      LoadUser(userData);
+      dispatch({
+        type: LoginTypes.LOGIN_ACTION,
+        payload: userData
+      });
     }
-  }, []);
+  });
 
   return (
     <Container duration="1s">

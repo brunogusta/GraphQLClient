@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { Provider } from 'react-redux';
 import './config/reactotronConfig';
@@ -19,7 +19,7 @@ import store from './store';
 function App() {
   return (
     <Provider store={store}>
-      <BrowserRouter history={history}>
+      <Router history={history}>
         <ApolloProvider client={client}>
           <Container>
             <Header />
@@ -30,7 +30,7 @@ function App() {
           </Container>
           <GlobalStyle />
         </ApolloProvider>
-      </BrowserRouter>
+      </Router>
     </Provider>
   );
 }

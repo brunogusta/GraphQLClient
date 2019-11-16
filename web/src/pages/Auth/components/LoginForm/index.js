@@ -43,7 +43,7 @@ export default function LoginForm() {
 
   const dispatch = useDispatch();
   const { email, password } = userData.inputData;
-  const [sendMutation, { data, errors, loading }] = useMutation(LOGIN_QUERY, {
+  const [sendMutation] = useMutation(LOGIN_QUERY, {
     variables: {
       email,
       password
@@ -69,7 +69,6 @@ export default function LoginForm() {
         loginSuccess: true
       });
 
-      console.log(login);
       dispatch({
         type: LoginTypes.LOGIN_ACTION,
         payload: login

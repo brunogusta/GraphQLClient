@@ -3,19 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { Container, LoginButton, RegisterButton } from './styles';
 
 export default function Navigation() {
-  const [handleClick, useHandleClick] = useState({
+  const [event, setEvent] = useState({
     loginBtn: false,
     registerBtn: false
   });
 
-  const HandlerClickLogin = () => {
-    useHandleClick({
+  const handlerClickLogin = () => {
+    setEvent({
       loginBtn: true,
       registerBtn: false
     });
   };
   const HandlerClickRegister = () => {
-    useHandleClick({
+    setEvent({
       loginBtn: false,
       registerBtn: true
     });
@@ -24,11 +24,11 @@ export default function Navigation() {
   const url = window.location.href;
   useEffect(() => {
     if (url.indexOf('login') !== -1) {
-      HandlerClickLogin();
+      handlerClickLogin();
     } else if (url.indexOf('register') !== -1) {
       HandlerClickRegister();
     } else {
-      HandlerClickLogin();
+      handlerClickLogin();
     }
   }, [url]);
 
@@ -37,14 +37,14 @@ export default function Navigation() {
       <RegisterButton
         to="/auth/register"
         onClick={() => HandlerClickRegister()}
-        state={handleClick}
+        state={event}
       >
         <p>REGISTER</p>
       </RegisterButton>
       <LoginButton
         to="/auth/login"
-        onClick={() => HandlerClickLogin()}
-        state={handleClick}
+        onClick={() => handlerClickLogin()}
+        state={event}
       >
         <p>LOGIN</p>
       </LoginButton>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
@@ -145,7 +145,6 @@ export default function Update() {
     variables: {
       id,
       emailFilter,
-      id,
       name,
       email,
       password,

@@ -12,12 +12,12 @@ import {
 import StyleControl from '../../../../utils/functions/PerfilsStyleControl';
 
 export default function Navigation() {
-  const [handleClick, useHandleClick] = useState({
+  const [event, setEvent] = useState({
     button: ''
   });
 
-  const HandleStyleButton = name => {
-    useHandleClick({
+  const handleStyleButton = name => {
+    setEvent({
       button: name
     });
   };
@@ -25,43 +25,43 @@ export default function Navigation() {
   const url = window.location.href;
   useEffect(() => {
     const buttonName = StyleControl(url);
-    HandleStyleButton(buttonName);
+    handleStyleButton(buttonName);
   }, [url]);
 
   return (
     <Container>
       <UsersButton
         to="/users/list"
-        onClick={() => HandleStyleButton('List')}
-        state={handleClick}
+        onClick={() => handleStyleButton('List')}
+        state={event}
       >
         <p>LIST</p>
       </UsersButton>
       <SearchButton
         to="/users/search"
-        onClick={() => HandleStyleButton('Search')}
-        state={handleClick}
+        onClick={() => handleStyleButton('Search')}
+        state={event}
       >
         <p>SEARCH</p>
       </SearchButton>
       <NewUserButton
         to="/users/new"
-        onClick={() => HandleStyleButton('New')}
-        state={handleClick}
+        onClick={() => handleStyleButton('New')}
+        state={event}
       >
         <p>NEW USER</p>
       </NewUserButton>
       <UpdateButton
         to="/users/update"
-        onClick={() => HandleStyleButton('Update')}
-        state={handleClick}
+        onClick={() => handleStyleButton('Update')}
+        state={event}
       >
         <p>UPDATE</p>
       </UpdateButton>
       <RemoveButton
         to="/users/delete"
-        onClick={() => HandleStyleButton('Delete')}
-        state={handleClick}
+        onClick={() => handleStyleButton('Delete')}
+        state={event}
       >
         <p>DELETE</p>
       </RemoveButton>

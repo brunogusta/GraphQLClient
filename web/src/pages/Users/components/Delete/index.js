@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-import { useMutation, useLazyQuery } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import {
@@ -73,14 +73,12 @@ export default function Delete() {
     },
     fetchPolicy: 'no-cache',
     onError: ({ graphQLErrors }) => {
-      console.log(graphQLErrors);
       setError({
         ...error,
         errorMessage: graphQLErrors[0].message
       });
     },
     onCompleted: data => {
-      console.log(data);
       if (data.removeUser === null) {
         setError({
           ...error,

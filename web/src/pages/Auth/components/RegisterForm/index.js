@@ -52,7 +52,6 @@ export default function RegisterForm() {
       });
     },
     onCompleted: data => {
-      console.log(data);
       setRequestData({
         ...requestData,
         registerSuccess: true,

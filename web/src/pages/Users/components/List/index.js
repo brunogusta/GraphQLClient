@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useLazyQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
@@ -29,7 +29,7 @@ export default function List() {
     errorMessage: ''
   });
 
-  const [sendQuery, { data, errors }] = useLazyQuery(USERS_QUERY, {
+  const [sendQuery, { data }] = useLazyQuery(USERS_QUERY, {
     fetchPolicy: 'no-cache',
     onError: ({ graphQLErrors }) => {
       setErrors({

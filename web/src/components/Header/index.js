@@ -11,7 +11,7 @@ export default function Header() {
         <strong>GRAPHQL</strong>
         CLIENT
       </p>
-      <img src={Logo} />
+      <img src={Logo} alt="logo"/>
     </Container>
   );
 }

@@ -20,8 +20,8 @@ export const AuthButton = styled(Link)`
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  border-bottom: ${({ handleClick }) =>
-    handleClick.button === 'Auth' ? '3px solid #fff' : null};
+  border-bottom: ${({ event }) =>
+    event.button === 'Auth' ? '3px solid #fff' : null};
 
   p {
     font-size: 13px;
@@ -44,8 +44,8 @@ export const UsersButton = styled(Link)`
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  border-bottom: ${({ handleClick }) =>
-    handleClick.button === 'Users' ? '3px solid #fff' : null};
+  border-bottom: ${({ event }) =>
+    event.button === 'Users' ? '3px solid #fff' : null};
 
   p {
     font-size: 13px;
@@ -68,8 +68,8 @@ export const PerfilsButton = styled(Link)`
   justify-content: center;
   align-items: center;
   text-decoration: none;
-  border-bottom: ${({ handleClick }) =>
-    handleClick.button === 'Perfils' ? '3px solid #fff' : null};
+  border-bottom: ${({ event }) =>
+    event.button === 'Perfils' ? '3px solid #fff' : null};
 
   p {
     font-size: 13px;

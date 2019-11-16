@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { useQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+
 
 import { Container, FormBox } from './styles';
 
@@ -17,12 +16,6 @@ import { Types as LoginTypes } from '../../store/ducks/userLoged';
 
 export default function Users() {
   const dispatch = useDispatch();
-  const LoadUser = userData => {
-    dispatch({
-      type: LoginTypes.LOGIN_ACTION,
-      payload: userData
-    });
-  };
 
   useEffect(() => {
     const loged = localStorage.getItem('loged');
@@ -34,9 +27,12 @@ export default function Users() {
         perfils: JSON.parse(localStorage.getItem('perfils'))
       };
 
-      LoadUser(userData);
+      dispatch({
+        type: LoginTypes.LOGIN_ACTION,
+        payload: userData
+      });
     }
-  }, []);
+  });
 
   return (
     <Container duration="1s">
