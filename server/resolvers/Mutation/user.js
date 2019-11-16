@@ -81,6 +81,10 @@ const mutations = {
     }
   },
   async removeUser(_, args, ctx) {
+    if (!ctx.user) {
+      ctx.userValidate();
+    }
+
     ctx && ctx.adminValidate();
     try {
       const user = await getUser(_, args);
@@ -101,7 +105,15 @@ const mutations = {
   async updateUser(_, { filter, data }, ctx) {
     ctx && ctx.userFilterValidate(filter);
     try {
+      const users = await db('users');
+      const removedCurrentlyUser = users.find(
+        user => JSON.stringify(user.email) === JSON.stringify(data.email)
+      );
+
+      if (removedCurrentlyUser) throw new Error('The email already exists');
+
       const user = await getUser(_, { filter });
+      console.log(user);
       if (user) {
         const { id } = user;
         if (ctx.admin && data.perfils) {
@@ -109,9 +121,9 @@ const mutations = {
             .where({ user_id: id })
             .delete();
 
-          for (let filtro of data.perfils) {
+          for (let filter of data.perfils) {
             const perfil = await getPerfil(_, {
-              filtro
+              filter
             });
 
             if (perfil) {

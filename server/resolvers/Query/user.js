@@ -10,19 +10,21 @@ module.exports = {
 
     return db('users');
   },
-  user(_, { filter }, ctx) {
+  async user(_, { filter }, ctx) {
     ctx && ctx.userFilterValidate(filter);
 
     if (!filter) return null;
     const { id, email } = filter;
     if (id) {
-      return db('users')
+      const user = await db('users')
         .where({ id })
         .first();
+      return user;
     } else if (email) {
-      return db('users')
+      const user = await db('users')
         .where({ email })
         .first();
+      return user;
     } else {
       return null;
     }

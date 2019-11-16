@@ -7,14 +7,14 @@ type Mutation {
 
   newUser(data: UserInput!): User!
 
-  removeUser(filtro: UserFilter!): User
+  removeUser(filter: UserFilter!): User
 
-  updateUser(filtro: UserFilter!, data: UserInput!): User
+  updateUser(filter: UserFilter!, data: UserInput!): User
 
   # Mutations de Perfil
   newPerfil(data: PerfilInput!): Perfil!
 
-  removePerfil(filtro: PerfilFilter!): Perfil
+  removePerfil(filter: PerfilFilter!): Perfil
 
-  updatePerfil(filtro: PerfilFilter!, data: PerfilInput!): Perfil
+  updatePerfil(filter: PerfilFilter!, data: PerfilInput!): Perfil
 }

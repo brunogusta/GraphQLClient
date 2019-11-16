@@ -29,7 +29,6 @@ module.exports = async ({ req }) => {
   const err = new Error('User is not an administrator.');
   const userErr = new Error('Comum user cannot search other users');
   const noUserErr = new Error('You must be logged in to perform the search.');
-  console.log(user);
   return {
     user,
     admin,
@@ -39,13 +38,13 @@ module.exports = async ({ req }) => {
     adminValidate() {
       if (!admin) throw err;
     },
-    userFilterValidate(filtro) {
+    userFilterValidate(filter) {
       if (admin) return;
 
       if (!user) throw noUserErr;
-      if (!filtro) throw userErr;
+      if (!filter) throw userErr;
 
-      const { id, email } = filtro;
+      const { id, email } = filter;
       if (!id && !email) throw userErr;
       if (id && id !== user.id) throw userErr;
       if (email && email !== user.email) throw userErr;

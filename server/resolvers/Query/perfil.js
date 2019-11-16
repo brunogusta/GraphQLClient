@@ -12,7 +12,7 @@ module.exports = {
     const { id, name } = filter;
     if (id) {
       return db('perfils')
-        .where({ id })
+        .where({ user_id: id })
         .first();
     } else if (name) {
       return db('perfils')
