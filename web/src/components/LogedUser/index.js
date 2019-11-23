@@ -8,6 +8,10 @@ import { Container, NoLogedUser } from './styles';
 
 import history from '../../routes/history';
 
+import { Button } from '@material-ui/core'
+import useStyles from '../../styles/customMaterialBtn'
+
+
 function LogedUser(props) {
   const { isLoged, userData } = useSelector(state => state.userLoged);
 
@@ -25,6 +29,8 @@ function LogedUser(props) {
     history.push('/');
   };
 
+  const classes = useStyles();
+
   if (isLoged) {
     return (
       <Container>
@@ -32,7 +38,7 @@ function LogedUser(props) {
           <p>Name: {userData.name}</p>
           <p>E-mail: {userData.email}</p>
           <p>Perfil(s): {userData.perfils.map(perfil => perfil.name)}</p>
-          <button onClick={LogOut}>EXIT</button>
+          <Button className={classes.root} variant='contained' color='secondary' onClick={LogOut}>EXIT</Button>
         </div>
       </Container>
     );

@@ -1,7 +1,5 @@
-import styled, { keyframes } from 'styled-components';
-import BaseAnimation from '../../../../utils/Animations/baseAnimation';
-
-import { SendButton } from '../../../../utils/Animations/button';
+import styled, { keyframes } from "styled-components";
+import BaseAnimation from "../../../../utils/Animations/baseAnimation";
 
 const FadeInAnimation = keyframes`
 from {
@@ -20,7 +18,7 @@ export const Container = styled(BaseAnimation)`
 
   grid-template-columns: repeat(2, minmax(440px, 1fr));
   grid-template-rows: 1fr;
-  grid-template-areas: 'formik result';
+  grid-template-areas: "formik result";
   column-gap: 15px;
 
   animation-name: ${FadeInAnimation};
@@ -51,20 +49,15 @@ export const Form = styled.div`
   margin-top: 10px;
 
   input {
-    margin-top: 5vh;
+    margin-top: 3vh;
     width: 100%;
     border: none;
     border-bottom: 2px solid #f38bd1;
     font-size: 17px;
   }
-`;
 
-export const SearchButton = styled(SendButton)`
-  margin-top: 30px;
-  opacity: ${props => (props.disabled ? '0.5' : '1')};
-
-  &:active {
-    background-color: ${props => (props.disabled ? '' : '#d741a6')};
+  input:nth-child(1n) {
+    margin-bottom: 2vh;
   }
 `;
 
@@ -94,6 +87,7 @@ export const UserDataBox = styled.div`
 
 export const TextError = styled.p`
   font-weight: 100;
+  position: absolute;
   color: #ea003f;
 `;
 

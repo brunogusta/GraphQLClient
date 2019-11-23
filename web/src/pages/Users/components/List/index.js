@@ -2,18 +2,23 @@ import React, { useState } from 'react';
 import { useLazyQuery } from 'react-apollo';
 import gql from 'graphql-tag';
 
+
+import { Button } from '@material-ui/core';
+import useStyles from '../../../../styles/customMaterialBtn'
+
 import {
   Container,
-  SearchButton,
   TableContainer,
   Table,
-  ButtonContainer
+  ButtonContainer,
+  ImgAvatar,
 } from './styles';
 
 const USERS_QUERY = gql`
   query {
     users {
       id
+      avatar
       name
       email
       perfils {
@@ -47,18 +52,20 @@ export default function List() {
     sendQuery();
   };
 
+  const classes = useStyles()
   return (
     <Container>
       <ButtonContainer>
-        <SearchButton disabled={error.haveError} onClick={handleSubmit}>
+        <Button className={classes.root} color="secondary"variant='contained' disabled={error.haveError} onClick={handleSubmit}>
           LOAD USERS
-        </SearchButton>
+        </Button>
         {error.haveError && <p>{error.errorMessage}</p>}
       </ButtonContainer>
       <TableContainer>
         <Table>
           <thead>
             <tr>
+              <th>Avatar</th>
               <th>ID</th>
               <th>Name</th>
               <th>E-mail</th>
@@ -68,13 +75,45 @@ export default function List() {
           {data ? (
             <tbody>
               {data.users.map(user => {
+                console.log(user)
                 return (
+                  <>
                   <tr key={user.id}>
+                    <td>{<ImgAvatar src={user.avatar} alt="avatar"/>}</td>
                     <td>{user.id}</td>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.perfils[0].name}</td>
                   </tr>
+                  <tr key={user.id}>
+                    <td>{<ImgAvatar src={user.avatar} alt="avatar"/>}</td>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.perfils[0].name}</td>
+                  </tr>
+                  <tr key={user.id}>
+                    <td>{<ImgAvatar src={user.avatar} alt="avatar"/>}</td>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.perfils[0].name}</td>
+                  </tr>
+                  <tr key={user.id}>
+                    <td>{<ImgAvatar src={user.avatar} alt="avatar"/>}</td>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.perfils[0].name}</td>
+                  </tr>
+                  <tr key={user.id}>
+                    <td>{<ImgAvatar src={user.avatar} alt="avatar"/>}</td>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.perfils[0].name}</td>
+                  </tr>
+                  </>
                 );
               })}
             </tbody>

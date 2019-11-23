@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
+import React, { useState } from "react";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
-import { useLazyQuery } from 'react-apollo';
-import gql from 'graphql-tag';
+import { useLazyQuery } from "react-apollo";
+import gql from "graphql-tag";
+
+import { Button } from "@material-ui/core";
+import useStyles from "../../../../styles/customMaterialBtn";
 
 import {
   Container,
@@ -11,11 +14,10 @@ import {
   FormContainer,
   ResultsContainer,
   TextError,
-  SearchButton,
   UserDataBox,
   PerfilBox,
   RequestTextError
-} from './styles';
+} from "./styles";
 
 const USER_QUERY = gql`
   query($id: Int, $email: String) {
@@ -37,12 +39,13 @@ export default function Search() {
     floatNumber: false,
     userNotFound: false,
     noAdm: false,
-    errorMessage: ''
+    errorMessage: "",
+    disableBtn: false
   });
 
   const [inputData, setInputData] = useState({
-    id: '',
-    email: '',
+    id: "",
+    email: "",
     loadResult: false
   });
 
@@ -78,7 +81,7 @@ export default function Search() {
     setError({
       ...error,
       userNotFound: false,
-      errorMessage: '',
+      errorMessage: "",
       noAdm: false
     });
   };
@@ -88,7 +91,7 @@ export default function Search() {
       return noFieldProvided();
     }
 
-    if (!Number.isInteger(id) && id !== '') {
+    if (!Number.isInteger(id) && id !== "") {
       return validateInt();
     }
 
@@ -97,7 +100,7 @@ export default function Search() {
   };
 
   const handleQuery = (id, email) => {
-    if (id === '') {
+    if (id === "") {
       id = 0;
     }
 
@@ -111,7 +114,7 @@ export default function Search() {
 
   const { id, email } = inputData;
   const [sendQuery, { data }] = useLazyQuery(USER_QUERY, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     variables: {
       id,
       email
@@ -120,7 +123,8 @@ export default function Search() {
       setError({
         ...error,
         noAdm: true,
-        errorMessage: graphQLErrors[0].message
+        errorMessage: graphQLErrors[0].message,
+        disableBtn: true
       });
     },
     onCompleted: () => {
@@ -135,14 +139,15 @@ export default function Search() {
     }
   });
 
+  const classes = useStyles();
   return (
     <Container duration="1s">
       <Formik
-        initialValues={{ id: '', email: '' }}
+        initialValues={{ id: "", email: "" }}
         onSubmit={values => handleSubmitValues(values)}
         validationSchema={Yup.object().shape({
-          id: Yup.number().typeError('ID must be a number'),
-          email: Yup.string().email('E-mail is not valid')
+          id: Yup.number().typeError("ID must be a number"),
+          email: Yup.string().email("E-mail is not valid")
         })}
         render={({
           values,
@@ -157,6 +162,9 @@ export default function Search() {
               <h3>Search</h3>
             </div>
             <Form>
+              {error.emptyInputs && (
+                <TextError>{"No fields provided"}</TextError>
+              )}
               <input
                 type="number"
                 name="id"
@@ -177,15 +185,19 @@ export default function Search() {
               {errors.email && touched.email && (
                 <TextError>{errors.email}</TextError>
               )}
-              {error.emptyInputs && (
-                <TextError>{'No fields provided'}</TextError>
-              )}
               {error.floatNumber && (
-                <TextError>{'ID must by an integer number'}</TextError>
+                <TextError>{"ID must by an integer number"}</TextError>
               )}
-              <SearchButton type="submit" onClick={handleSubmit}>
+              <Button
+                className={classes.root}
+                type="submit"
+                variant="contained"
+                color="secondary"
+                onClick={handleSubmit}
+                disabled={error.disableBtn}
+              >
                 <p>SEARCH</p>
-              </SearchButton>
+              </Button>
             </Form>
           </FormContainer>
         )}

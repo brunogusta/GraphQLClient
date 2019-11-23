@@ -17,3 +17,5 @@ export const Container = styled.div`
     'inputs'
     'footer';
 `;
+
+

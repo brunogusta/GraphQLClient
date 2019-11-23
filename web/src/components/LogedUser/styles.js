@@ -9,7 +9,7 @@ export const Container = styled.div`
   width: 100%;
   min-width: 600px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0px 20px;
   grid-area: logedUser;
 
   div {
@@ -19,21 +19,8 @@ export const Container = styled.div`
     border-radius: 5px;
     align-items: center;
     border: 1px solid #ccc;
-    height: 50%;
-    padding: 20px;
-
-    button {
-      background-color: #e4336c;
-      border-style: none;
-      padding: 10px 20px;
-
-      color: #fff;
-      font-weight: bold;
-
-      &:active {
-        background-color: #af0038;
-      }
-    }
+    height: 70%;
+    padding: 0px 20px;
   }
 `;
 
